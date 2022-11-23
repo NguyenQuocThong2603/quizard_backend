@@ -1,6 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
+import cors from 'cors';
 import config from './src/config/config.js';
 import connectDB from './src/config/db.js';
 import createRoutes from './src/routes/index.js';
@@ -10,6 +11,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(morgan('dev'));
+app.use(cors());
 
 createRoutes(app);
 connectDB();

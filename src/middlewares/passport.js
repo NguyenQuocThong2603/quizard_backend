@@ -38,8 +38,7 @@ opts.secretOrKey = config.JWT_SECRET;
 const JwtStrategy = Jwt.Strategy;
 
 passport.use(new JwtStrategy(opts, async (jwtPayload, done) => {
-  // const isExpired = jwt.verify();
-  const user = await UserService.findUser(jwtPayload.user.email);
+  const user = await UserService.findUser(jwtPayload.email);
   if (user) {
     return done(null, jwtPayload.user);
   }

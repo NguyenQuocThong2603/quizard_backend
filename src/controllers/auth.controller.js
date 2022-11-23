@@ -10,27 +10,21 @@ class AuthController {
     this.service = service;
   }
 
-  createToken(user, expiresIn) {
-    const token = jwt.sign(user, config.JWT_SECRET, {
-      expiresIn,
-    });
+  createToken(user) {
+    const token = jwt.sign(user, config.JWT_SECRET);
     return token;
-  }
-
-  createAccessToken(req, res) {
-    const newAccessToken = this.createToken();
   }
 
   async login(req, res) {
     const { user } = req;
 
-    const accessToken = this.createToken(user, config.EXPIRED_TIME_ACCESS_TOKEN);
+    const accessToken = this.createToken(user);
 
-    const refreshToken = this.createToken(user, config.EXPIRED_TIME_REFRESH_TOKEN);
+    // const refreshToken = this.createToken(user, config.EXPIRED_TIME_REFRESH_TOKEN);
 
     try {
-      await this.service.updateRefreshToken(user.email, refreshToken);
-      return res.status(200).json({ message: 'Login sucessfully', accessToken, refreshToken });
+      // await this.service.updateRefreshToken(user.email, refreshToken);
+      return res.status(200).json({ message: 'Login sucessfully', accessToken });
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
