@@ -17,4 +17,8 @@ authRouter.post('/register', (req, res) => {
 authRouter.get('/accessToken', (req, res) => {
   AuthController.createAccessToken(req, res);
 });
+
+authRouter.get('/confirm/:confirmationCode', (req, res) => {
+  AuthController.verify(req, res);
+});
 export default authRouter;

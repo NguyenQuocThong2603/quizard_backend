@@ -1,6 +1,8 @@
 import bcrypt from 'bcrypt';
 import moment from 'moment';
 import jwt from 'jsonwebtoken';
+import { nanoid } from 'nanoid';
+import sendConfirmationEmail from '../config/nodemailer.js';
 import UserService from '../services/user.service.js';
 import statusCode from '../constants/statusCode.js';
 import config from '../config/config.js';
@@ -50,9 +52,10 @@ class AuthController {
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
 
+    const confirmationCode = nanoid(10);
     // create user
     try {
-      user = await this.service.createUser(email, hash, name, gender, dob);
+      user = await this.service.createUser(email, hash, name, gender, dob, confirmationCode);
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
@@ -64,7 +67,24 @@ class AuthController {
       gender: user.gender,
       dob: user.dob,
     };
+    sendConfirmationEmail(user);
     return res.status(statusCode.CREATED).json({ message: 'Create user successfully', user: userDTO });
+  }
+
+  async verify(req, res) {
+    const { confirmationCode } = req.params;
+    try {
+      const user = await this.service.findUserByConfirmationCode(confirmationCode);
+
+      if (user) {
+        user.isVerified = true;
+        await user.save();
+      } else {
+        return res.status(statusCode.NOT_FOUND).json({ message: 'User not found' });
+      }
+    } catch (err) {
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
+    }
   }
 }
 

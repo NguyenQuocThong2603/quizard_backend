@@ -10,6 +10,7 @@ const UserSchema = new Schema({
   dob: { type: String, required: true },
   isVerified: { type: Boolean, default: false },
   refreshToken: String,
+  confirmationCode: { type: String, unique: true },
 });
 
 const User = mongoose.model('User', UserSchema);

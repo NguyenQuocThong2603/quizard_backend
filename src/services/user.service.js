@@ -12,13 +12,21 @@ class UserService {
     return user;
   }
 
-  async createUser(email, password, name, gender, dob) {
+  async findUserByConfirmationCode(confirmationCode) {
+    const user = await this.model.findOne({
+      confirmationCode,
+    });
+    return user;
+  }
+
+  async createUser(email, password, name, gender, dob, confirmationCode) {
     const newUser = await this.model({
       email,
       password,
       name,
       gender,
       dob,
+      confirmationCode,
     });
     return newUser.save();
   }
