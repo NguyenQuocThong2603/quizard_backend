@@ -22,6 +22,18 @@ class UserService {
     });
     return newUser.save();
   }
+
+  async updateRefreshToken(email, refreshToken) {
+    await this.model.updateOne({
+      email,
+    }, { refreshToken });
+  }
+
+  async deleteRefreshToken(email) {
+    await this.model.updateOne({
+      email,
+    }, { $unset: { refreshToken: 1 } });
+  }
 }
 
 export default new UserService(User);

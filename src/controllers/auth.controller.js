@@ -1,16 +1,40 @@
 import bcrypt from 'bcrypt';
 import moment from 'moment';
+import jwt from 'jsonwebtoken';
 import UserService from '../services/user.service.js';
 import statusCode from '../constants/statusCode.js';
+import config from '../config/config.js';
 
 class AuthController {
   constructor(service) {
     this.service = service;
   }
 
-  // async login(req, res) {
+  createToken(user, expiresIn) {
+    const token = jwt.sign(user, config.JWT_SECRET, {
+      expiresIn,
+    });
+    return token;
+  }
 
-  // }
+  createAccessToken(req, res) {
+    const newAccessToken = this.createToken();
+  }
+
+  async login(req, res) {
+    const { user } = req;
+
+    const accessToken = this.createToken(user, config.EXPIRED_TIME_ACCESS_TOKEN);
+
+    const refreshToken = this.createToken(user, config.EXPIRED_TIME_REFRESH_TOKEN);
+
+    try {
+      await this.service.updateRefreshToken(user.email, refreshToken);
+      return res.status(200).json({ message: 'Login sucessfully', accessToken, refreshToken });
+    } catch (err) {
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
+    }
+  }
 
   async register(req, res) {
     const { email, password, name, gender, dob } = req.body;
@@ -25,7 +49,7 @@ class AuthController {
     // check if user already exists
     let user = await this.service.findUser(email);
     if (user !== null) {
-      return res.status(statusCode.BAD_REQUEST).json({ message: 'User already exists' });
+      return res.status(statusCode.BAD_REQUEST).json({ message: 'Email already exists' });
     }
 
     // hash password

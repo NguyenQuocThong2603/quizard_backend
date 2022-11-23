@@ -1,0 +1,13 @@
+import express from 'express';
+import UserController from '../controllers/user.controller.js';
+
+const userRouter = express.Router();
+
+userRouter.get('/profile', (req, res) => {
+  UserController.profile(req, res);
+});
+
+userRouter.get('/logout', (req, res) => {
+  UserController.logout(req, res);
+});
+export default userRouter;
