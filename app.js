@@ -13,6 +13,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(morgan('dev'));
 app.use(cors());
 
+app.get('/', (req, res) => {
+  res.send('Hello');
+});
+
 createRoutes(app);
 connectDB();
 const port = config.PORT;
