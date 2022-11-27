@@ -18,6 +18,10 @@ class AuthController {
   }
 
   async login(req, res) {
+    if (req.message) {
+      if (req.message === 'Invalid username or password') { return res.status(statusCode.BAD_REQUEST).json({ message: req.message }); }
+      if (req.message === 'Not verified') { return res.status(statusCode.FORBIDDEN).json({ message: req.message }); }
+    }
     const { user } = req;
 
     const accessToken = this.createToken(user);
@@ -26,7 +30,7 @@ class AuthController {
 
     try {
       // await this.service.updateRefreshToken(user.email, refreshToken);
-      return res.status(200).json({ message: 'Login sucessfully', accessToken });
+      return res.status(statusCode.OK).json({ message: 'Login sucessfully', accessToken });
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
