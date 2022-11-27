@@ -7,6 +7,10 @@ userRouter.get('/profile', (req, res) => {
   UserController.profile(req, res);
 });
 
+userRouter.post('/profile', (req, res) => {
+  UserController.editProfile(req, res);
+});
+
 userRouter.get('/logout', (req, res) => {
   UserController.logout(req, res);
 });

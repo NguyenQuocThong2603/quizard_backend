@@ -57,6 +57,7 @@ class AuthController {
     try {
       user = await this.service.createUser(email, hash, name, gender, dob, confirmationCode);
     } catch (err) {
+      console.log(err);
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
 

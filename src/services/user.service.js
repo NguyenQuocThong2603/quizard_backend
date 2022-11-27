@@ -31,6 +31,15 @@ class UserService {
     return newUser.save();
   }
 
+  // update profile
+  async updateProfile(id, data) {
+    return await this.model.findByIdAndUpdate(
+      id,
+      data,
+      { new: true }, 
+    );
+  }
+
   async updateRefreshToken(email, refreshToken) {
     await this.model.updateOne({
       email,
