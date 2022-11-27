@@ -38,11 +38,12 @@ opts.secretOrKey = config.JWT_SECRET;
 const JwtStrategy = Jwt.Strategy;
 
 passport.use(new JwtStrategy(opts, async (jwtPayload, done) => {
-  const user = await UserService.findUser(jwtPayload.email);
+  let user = await UserService.findUser(jwtPayload.email);
   if (user) {
-    return done(null, jwtPayload.user);
+    user = jwtPayload;
+    return done(null, user);
   }
-
+  console.log('Da vao');
   return done(null, false);
 }));
 export default passport;
