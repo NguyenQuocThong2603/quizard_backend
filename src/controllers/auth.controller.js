@@ -61,7 +61,6 @@ class AuthController {
     try {
       user = await this.service.createUser(email, hash, name, gender, dob, confirmationCode);
     } catch (err) {
-      console.log(err);
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
 
@@ -84,9 +83,9 @@ class AuthController {
       if (user) {
         user.isVerified = true;
         await user.save();
-      } else {
-        return res.status(statusCode.NOT_FOUND).json({ message: 'User not found' });
+        return res.status(statusCode.OK).json({ message: 'Verified successfully' });
       }
+      return res.status(statusCode.NOT_FOUND).json({ message: 'User not found' });
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
