@@ -1,5 +1,6 @@
 import GroupService from '../services/group.service.js';
 import { nanoid } from 'nanoid';
+import statusCode from '../constants/statusCode.js';
 
 class GroupController {
   constructor(service) {
@@ -12,7 +13,8 @@ class GroupController {
   }
 
   async create(req, res) {
-    const { name, description, owner } = req.body;
+    const { name, description } = req.body;
+    const { email: owner } = req.user;
 
     // create group
     let group;

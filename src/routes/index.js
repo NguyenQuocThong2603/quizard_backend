@@ -7,7 +7,7 @@ import verifyToken from '../middlewares/verifyToken.js';
 const createRoutes = app => {
   app.use('/auth', authRouter);
   app.use('/users', passport.authenticate('jwt', { session: false }), userRouter);
-  app.use('/groups', groupRouter);
+  app.use('/groups', passport.authenticate('jwt', { session: false }), groupRouter);
 };
 
 export default createRoutes;
