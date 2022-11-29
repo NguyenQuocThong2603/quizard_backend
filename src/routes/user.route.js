@@ -7,7 +7,7 @@ userRouter.get('/profile', (req, res) => {
   UserController.profile(req, res);
 });
 
-userRouter.post('/profile', (req, res) => {
+userRouter.put('/profile', (req, res) => {
   UserController.editProfile(req, res);
 });
 
