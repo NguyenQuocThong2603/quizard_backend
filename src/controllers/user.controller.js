@@ -7,8 +7,9 @@ class UserController {
   }
 
   async profile(req, res) {
-    console.log(req.user);
-    return res.status(200).json(req.user);
+    const { user } = req;
+    const userProfile = await this.service.getProfile(user._id);
+    return res.status(200).json(userProfile);
   }
 
   async editProfile(req, res) {
