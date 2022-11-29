@@ -14,4 +14,8 @@ groupRouter.post('/create', (req, res) => {
 groupRouter.get('/detail/:groupId', (req, res) => {
   GroupController.getDetail(req, res);
 });
+
+groupRouter.post('/changeRole', (req, res) => {
+  GroupController.changeRole(req, res);
+});
 export default groupRouter;

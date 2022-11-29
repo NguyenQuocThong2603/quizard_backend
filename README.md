@@ -1,6 +1,6 @@
 # quizard_backend
 
-Domain of server: https://quizardbackend-production.up.railway.app/
+Domain of server: `https://quizardbackend-production.up.railway.app/`
 
 ## Routes
 
@@ -8,19 +8,19 @@ Domain of server: https://quizardbackend-production.up.railway.app/
 
 #### Login
 
-api: /auth/login
+api: POST /auth/login
 
 if invalid username or password:
 
 ```json
-statusCode: 401
-Unauthorized
+"statusCode": 401
+"Unauthorized"
 ```
 
 if login success:
 
 ```json
-statusCode: 200
+"statusCode": 200
 {
     "message": "Login sucessfully",
     "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzdmMmFlZWVkZWViM2FhNWFmOGNlMzQiLCJlbWFpbCI6Inl1YmljdWJpbkBnbWFpbC5jb20iLCJuYW1lIjoiTmd1eeG7hW4gUXXhu5FjIFRow7RuZyIsImdlbmRlciI6Ik1hbGUiLCJkb2IiOiIyNi8wMy8yMDAxIiwiaWF0IjoxNjY5NTY2NzM1fQ.XjZzCyha4vOrvavyJsnlW-kOA06pnr0hJKUMVT8HcMw"
@@ -29,12 +29,12 @@ statusCode: 200
 
 #### Register
 
-api: /auth/register
+api: POST /auth/register
 
 if bad request:
 
 ```json
-statusCode: 400
+"statusCode": 400
 {
   "message": "Input validation failed"
 }
@@ -43,7 +43,7 @@ statusCode: 400
 if email exist
 
 ```json
-statusCode: 400
+"statusCode": 400
 {
   "message": "Email already exists"
 }
@@ -52,7 +52,7 @@ statusCode: 400
 if register successfully
 
 ```json
-statusCode: 201
+"statusCode": 201
 {
     "message": "Create user successfully",
     "user": {
@@ -69,12 +69,12 @@ statusCode: 201
 
 #### Get detail group
 
-api: /groups/detail/:groupId
+api: GET /groups/detail/:groupId
 
 if group not found:
 
 ```json
-statusCode: 404
+"statusCode": 404
 { 
   "message": "Not found"
 }
@@ -83,7 +83,7 @@ statusCode: 404
 if get detail successfully:
 
 ```json
-statusCode: 200
+"statusCode": 200
 {
     "_id": "6385bda532217cc07f13171d",
     "groupId": "LnqC-U0Ak8",
@@ -112,5 +112,35 @@ statusCode: 200
             "role": "Member"
         }
     ]
+}
+```
+
+#### Change role
+
+api: POST /groups/changeRole
+
+if group not found:
+
+```json
+"statusCode": 404
+{ 
+  "message": "Not found"
+}
+```
+
+if change role successfully:
+
+```json
+{
+    "message": "Change role successfully",
+    "group": {
+        "_id": "6385bda532217cc07f13171d",
+        "groupId": "LnqC-U0Ak8",
+        "description": "Test group",
+        "name": "Group 1",
+        "owner": "yubicubin2@gmail.com",
+        "roles": [],
+        "__v": 3
+    }
 }
 ```
