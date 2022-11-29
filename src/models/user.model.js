@@ -11,6 +11,8 @@ const UserSchema = new Schema({
   isVerified: { type: Boolean, default: false },
   refreshToken: String,
   confirmationCode: { type: String, unique: true },
+  joinedGroup: { type: [Schema.Types.ObjectId], ref: 'Group', default: [] },
+  ownedGroup: { type: [Schema.Types.ObjectId], ref: 'Group', default: [] },
 });
 
 const User = mongoose.model('User', UserSchema);

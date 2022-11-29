@@ -12,6 +12,13 @@ class GroupService {
   //   return group;
   // }
 
+  async findGroupById(groupId) {
+    const group = await this.model.findOne({
+      groupId,
+    });
+    return group;
+  }
+
   async list() {
     const groups = await this.model.find({}).lean();
     return groups;
@@ -22,7 +29,7 @@ class GroupService {
       groupId,
       name,
       description,
-      owner
+      owner,
     });
     return newGroup.save();
   }

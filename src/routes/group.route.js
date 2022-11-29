@@ -10,4 +10,8 @@ groupRouter.get('/', (req, res) => {
 groupRouter.post('/create', (req, res) => {
   GroupController.create(req, res);
 });
+
+groupRouter.get('/detail/:groupId', (req, res) => {
+  GroupController.getDetail(req, res);
+});
 export default groupRouter;

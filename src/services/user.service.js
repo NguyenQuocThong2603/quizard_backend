@@ -6,8 +6,7 @@ class UserService {
   }
 
   async getProfile(id) {
-    const user = await this.model.findById
-    (id, { email: 1, name: 1, gender: 1, dob: 1 });
+    const user = await this.model.findById(id, { email: 1, name: 1, gender: 1, dob: 1 });
     return user;
   }
 
@@ -25,6 +24,13 @@ class UserService {
     return user;
   }
 
+  async findAllUsersInGroup(groupID) {
+    const users = await this.model.find({
+      joinedGroup: { $in: [groupID] },
+    }, { password: 0, gender: 0, dob: 0, isVerified: 0, confirmationCode: 0, ownedGroup: 0, joinedGroup: 0 }).lean();
+    return users;
+  }
+
   async createUser(email, password, name, gender, dob, confirmationCode) {
     const newUser = await this.model({
       email,
@@ -39,10 +45,10 @@ class UserService {
 
   // update profile
   async updateProfile(id, data) {
-    return await this.model.findByIdAndUpdate(
+    return this.model.findByIdAndUpdate(
       id,
       data,
-      { new: true }, 
+      { new: true },
     );
   }
 
