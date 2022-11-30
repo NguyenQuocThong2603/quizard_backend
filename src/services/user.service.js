@@ -26,8 +26,8 @@ class UserService {
 
   async findAllUsersInGroup(groupID) {
     const users = await this.model.find({
-      joinedGroup: { $in: [groupID] },
-    }, { password: 0, gender: 0, dob: 0, isVerified: 0, confirmationCode: 0, ownedGroup: 0, joinedGroup: 0 }).lean();
+      joinedGroups: { $in: [groupID] },
+    }, { password: 0, gender: 0, dob: 0, isVerified: 0, confirmationCode: 0, ownedGroups: 0, joinedGroups: 0 }).lean();
     return users;
   }
 

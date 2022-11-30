@@ -28,10 +28,9 @@ class GroupController {
 
       // add user to joined groups & owned groups
       const user = await this.userService.findUser(owner);
-      user.joinedGroup.push(group._id);
-      user.ownedGroup.push(group._id);
+      user.joinedGroups.push(group._id);
+      user.ownedGroups.push(group._id);
       user.save();
-
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
@@ -143,7 +142,7 @@ class GroupController {
         return res.status(statusCode.NOT_FOUND).json({ message: 'Group not found' });
       }
 
-      kickedUser.joinedGroup = _.filter(kickedUser.joinedGroup, g => !g.equals(group._id));
+      kickedUser.joinedGroups = _.filter(kickedUser.joinedGroups, g => !g.equals(group._id));
       await kickedUser.save();
 
       const users = await this.userService.findAllUsersInGroup(group._id);
