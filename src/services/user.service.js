@@ -63,6 +63,16 @@ class UserService {
       email,
     }, { $unset: { refreshToken: 1 } });
   }
+
+  async getJoinedGroups(user) {
+    await user.populate("joinedGroups");
+    return user.joinedGroups;
+  }
+
+  async getOwnedGroups(user) {
+    await user.populate("ownedGroups");
+    return user.ownedGroups;
+  }
 }
 
 export default new UserService(User);

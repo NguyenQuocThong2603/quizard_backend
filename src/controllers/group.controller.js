@@ -12,7 +12,29 @@ class GroupController {
   }
 
   async list(req, res) {
-    const groups = await this.groupService.list();
+    const { email } = req.user;
+    const user = await this.userService.findUser(email);
+    const { category } = req.query;
+    let groups = [];
+    switch (category) {
+      case "all":
+        const joinedGroups = await this.userService.getJoinedGroups(user);
+        const ownedGroups = await this.userService.getOwnedGroups(user);
+        let setMap = new Map();
+        for (const group of ownedGroups.concat(joinedGroups)) setMap.set(group.groupId, group);
+        console.log(setMap);
+        groups = [...setMap.values()];
+        break;
+
+      case "owned":
+        groups = await this.userService.getOwnedGroups(user);
+        break;
+
+      case "joined":
+        groups = await this.userService.getJoinedGroups(user);
+        break;
+    }
+    // const groups = await this.groupService.list();
     return res.status(200).json(groups);
   }
 
