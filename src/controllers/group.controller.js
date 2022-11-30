@@ -25,6 +25,13 @@ class GroupController {
     try {
       const groupId = nanoid(10);
       group = await this.groupService.create(groupId, name, description, owner);
+
+      // add user to joined groups & owned groups
+      const user = await this.userService.findUser(owner);
+      user.joinedGroup.push(group._id);
+      user.ownedGroup.push(group._id);
+      user.save();
+
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
