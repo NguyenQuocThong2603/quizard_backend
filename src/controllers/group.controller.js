@@ -3,6 +3,7 @@ import _ from 'lodash';
 import statusCode from '../constants/statusCode.js';
 import GroupService from '../services/group.service.js';
 import UserService from '../services/user.service.js';
+import { sendInviteLink } from '../config/nodemailer.js';
 
 class GroupController {
   constructor(userService, groupService) {
@@ -24,7 +25,6 @@ class GroupController {
       const groupId = nanoid(10);
       group = await this.groupService.create(groupId, name, description, owner);
     } catch (err) {
-      console.log(err);
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
 
@@ -150,6 +150,20 @@ class GroupController {
         }
       });
       return res.status(statusCode.OK).json({ message: 'Kick user successfully', joinedUser: users });
+    } catch (err) {
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
+    }
+  }
+
+  async inviteByEmail(req, res) {
+    const { email, groupId } = req.body;
+    try {
+      const group = await this.groupService.findGroupById(groupId);
+      if (!group) {
+        return res.status(statusCode.NOT_FOUND).json({ message: 'Group not found' });
+      }
+      sendInviteLink(email, group);
+      return res.status(statusCode.OK).json({ message: 'Invite successfully' });
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }

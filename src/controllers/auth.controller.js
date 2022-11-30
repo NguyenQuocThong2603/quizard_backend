@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import moment from 'moment';
 import jwt from 'jsonwebtoken';
 import { nanoid } from 'nanoid';
-import sendConfirmationEmail from '../config/nodemailer.js';
+import { sendConfirmationEmail } from '../config/nodemailer.js';
 import UserService from '../services/user.service.js';
 import statusCode from '../constants/statusCode.js';
 import config from '../config/config.js';

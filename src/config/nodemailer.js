@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
-import createHtml from '../constants/contentOfConfirmationEmail.js';
+import contentOfConfirmationEmail from '../constants/contentOfConfirmationEmail.js';
+import contentOfInviteLink from '../constants/contentOfInviteLinkEmail.js';
 import config from './config.js';
 
 const transport = nodemailer.createTransport({
@@ -13,7 +14,7 @@ const transport = nodemailer.createTransport({
 });
 
 function sendConfirmationEmail(user) {
-  const html = createHtml(user);
+  const html = contentOfConfirmationEmail(user);
   transport.sendMail({
     from: config.QUIZARD_MAIL,
     to: user.email,
@@ -22,4 +23,14 @@ function sendConfirmationEmail(user) {
   }).catch(err => console.log(err));
 }
 
-export default sendConfirmationEmail;
+function sendInviteLink(email, group) {
+  const html = contentOfInviteLink(group);
+  transport.sendMail({
+    from: config.QUIZARD_MAIL,
+    to: email,
+    subject: 'Group invitation',
+    html,
+  }).catch(err => console.log(err));
+}
+
+export { sendConfirmationEmail, sendInviteLink };
