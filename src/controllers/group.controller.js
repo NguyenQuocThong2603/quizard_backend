@@ -43,7 +43,7 @@ class GroupController {
     try {
       const group = await this.groupService.findGroupById(groupId);
       if (!group) {
-        return res.status(statusCode.NOT_FOUND).json({ message: 'Not found' });
+        return res.status(statusCode.NOT_FOUND).json({ message: 'Group not found' });
       }
       const users = await this.userService.findAllUsersInGroup(group._id);
 
@@ -70,17 +70,28 @@ class GroupController {
   }
 
   async changeRole(req, res) {
-    const { roleWantToChange, groupId, userEmail } = req.body;
+    const { roleWantToChange, groupId, email } = req.body;
     if (roleWantToChange === 'Member') {
       try {
         const group = await this.groupService.findGroupById(groupId);
         if (!group) {
-          return res.status(statusCode.NOT_FOUND).json({ message: 'Not found' });
+          return res.status(statusCode.NOT_FOUND).json({ message: 'Group not found' });
         }
-        group.roles = _.difference(group.roles, [userEmail]);
-        console.log(group);
+        group.roles = _.difference(group.roles, [email]);
         await group.save();
-        return res.status(statusCode.OK).json({ message: 'Change role successfully', group });
+
+        const users = await this.userService.findAllUsersInGroup(group._id);
+
+        users.forEach(user => {
+          if (user.email === group.owner) {
+            user.role = 'Owner';
+          } else if ((_.findIndex(group.roles, role => role === user.email) !== -1)) {
+            user.role = 'Co-Owner';
+          } else {
+            user.role = 'Member';
+          }
+        });
+        return res.status(statusCode.OK).json({ message: 'Change role successfully', joinedUser: users });
       } catch (err) {
         return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
       }
@@ -88,14 +99,59 @@ class GroupController {
       try {
         const group = await this.groupService.findGroupById(groupId);
         if (!group) {
-          return res.status(statusCode.NOT_FOUND).json({ message: 'Not found' });
+          return res.status(statusCode.NOT_FOUND).json({ message: 'Group not found' });
         }
-        group.roles.push(userEmail);
+        group.roles.push(email);
         await group.save();
-        return res.status(statusCode.OK).json({ message: 'Change role successfully', group });
+        const users = await this.userService.findAllUsersInGroup(group._id);
+
+        users.forEach(user => {
+          if (user.email === group.owner) {
+            user.role = 'Owner';
+          } else if ((_.findIndex(group.roles, role => role === user.email) !== -1)) {
+            user.role = 'Co-Owner';
+          } else {
+            user.role = 'Member';
+          }
+        });
+        return res.status(statusCode.OK).json({ message: 'Change role successfully', joinedUser: users });
       } catch (err) {
         return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
       }
+    }
+  }
+
+  async kickUser(req, res) {
+    const { email, groupId } = req.body;
+
+    try {
+      const kickedUser = await this.userService.findUser(email);
+
+      if (!kickedUser) {
+        return res.status(statusCode.NOT_FOUND).json({ message: 'User not found' });
+      }
+      const group = await this.groupService.findGroupById(groupId);
+      if (!group) {
+        return res.status(statusCode.NOT_FOUND).json({ message: 'Group not found' });
+      }
+
+      kickedUser.joinedGroup = _.filter(kickedUser.joinedGroup, g => !g.equals(group._id));
+      await kickedUser.save();
+
+      const users = await this.userService.findAllUsersInGroup(group._id);
+
+      users.forEach(user => {
+        if (user.email === group.owner) {
+          user.role = 'Owner';
+        } else if ((_.findIndex(group.roles, role => role === user.email) !== -1)) {
+          user.role = 'Co-Owner';
+        } else {
+          user.role = 'Member';
+        }
+      });
+      return res.status(statusCode.OK).json({ message: 'Kick user successfully', joinedUser: users });
+    } catch (err) {
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
   }
 }

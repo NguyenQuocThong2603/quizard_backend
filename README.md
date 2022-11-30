@@ -76,7 +76,7 @@ if group not found:
 ```json
 "statusCode": 404
 { 
-  "message": "Not found"
+  "message": "Group not found"
 }
 ```
 
@@ -124,7 +124,7 @@ if group not found:
 ```json
 "statusCode": 404
 { 
-  "message": "Not found"
+  "message": "Group not found"
 }
 ```
 
@@ -133,14 +133,75 @@ if change role successfully:
 ```json
 {
     "message": "Change role successfully",
-    "group": {
-        "_id": "6385bda532217cc07f13171d",
-        "groupId": "LnqC-U0Ak8",
-        "description": "Test group",
-        "name": "Group 1",
-        "owner": "yubicubin2@gmail.com",
-        "roles": [],
-        "__v": 3
-    }
+    "joinedUser": [
+        {
+            "_id": "6385be939f331928a1ac3b9a",
+            "email": "yubicubin3@gmail.com",
+            "name": "Nguyễn Quốc Thông",
+            "__v": 0,
+            "role": "Member"
+        },
+        {
+            "_id": "6385bf109f331928a1ac3b9d",
+            "email": "yubicubin2@gmail.com",
+            "name": "Nguyễn Quốc Thông",
+            "__v": 0,
+            "role": "Owner"
+        },
+        {
+            "_id": "6385cc6004ba85ce3f52f2cc",
+            "email": "yubicubin4@gmail.com",
+            "name": "Nguyễn Quốc Thông",
+            "__v": 0,
+            "role": "Member"
+        }
+    ]
+}
+```
+
+#### Kick user
+
+api: DELETE /groups/kickUser
+
+if group not found:
+
+```json
+"statusCode": 404
+{ 
+  "message": "Group not found"
+}
+```
+
+if user not found:
+
+```json
+"statusCode": 404
+{ 
+  "message": "Group not found"
+}
+```
+
+if kick user successfully:
+
+```json
+"statusCode": 200
+{
+    "message": "Kick user successfully",
+    "joinedUser": [
+        {
+            "_id": "6385bf109f331928a1ac3b9d",
+            "email": "yubicubin2@gmail.com",
+            "name": "Nguyễn Quốc Thông",
+            "__v": 0,
+            "role": "Owner"
+        },
+        {
+            "_id": "6385cc6004ba85ce3f52f2cc",
+            "email": "yubicubin4@gmail.com",
+            "name": "Nguyễn Quốc Thông",
+            "__v": 0,
+            "role": "Member"
+        }
+    ]
 }
 ```
