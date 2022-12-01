@@ -18,19 +18,19 @@ class GroupController {
     const { category } = req.query;
     let groups = [];
     switch (category) {
-      case "all":
+      case 'all':
         const joinedGroups = await this.userService.getJoinedGroups(user);
         const ownedGroups = await this.userService.getOwnedGroups(user);
-        let setMap = new Map();
+        const setMap = new Map();
         for (const group of ownedGroups.concat(joinedGroups)) setMap.set(group.groupId, group);
         groups = [...setMap.values()];
         break;
 
-      case "owned":
+      case 'owned':
         groups = await this.userService.getOwnedGroups(user);
         break;
 
-      case "joined":
+      case 'joined':
         groups = await this.userService.getJoinedGroups(user);
         break;
     }
@@ -152,7 +152,6 @@ class GroupController {
 
   async kickUser(req, res) {
     const { email, groupId } = req.body;
-
     try {
       const kickedUser = await this.userService.findUser(email);
 
@@ -199,14 +198,13 @@ class GroupController {
   }
 
   async join(req, res) {
-    const {url} = req.body;
+    const { url } = req.body;
     const link = await inviteService.findByUrl(url);
     const group = await this.groupService.find(link.group);
-    
-    const {email} = req.user;
+
+    const { email } = req.user;
     const user = await this.userService.findUser(email);
-    if (user.joinedGroups.includes(link.group)) 
-      return res.status(statusCode.OK).json({ message: 'Group already joined', groupId: group.groupId });
+    if (user.joinedGroups.includes(link.group)) { return res.status(statusCode.OK).json({ message: 'Group already joined', groupId: group.groupId }); }
 
     user.joinedGroups.push(link.group);
     user.save();

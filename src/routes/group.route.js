@@ -19,7 +19,7 @@ groupRouter.post('/changeRole', (req, res) => {
   GroupController.changeRole(req, res);
 });
 
-groupRouter.delete('/kickUser', (req, res) => {
+groupRouter.post('/kickUser', (req, res) => {
   GroupController.kickUser(req, res);
 });
 
