@@ -184,13 +184,9 @@ class GroupController {
   }
 
   async inviteByEmail(req, res) {
-    const { email, groupId } = req.body;
+    const { email, link } = req.body;
     try {
-      const group = await this.groupService.findGroupById(groupId);
-      if (!group) {
-        return res.status(statusCode.NOT_FOUND).json({ message: 'Group not found' });
-      }
-      sendInviteLink(email, group);
+      sendInviteLink(email, link);
       return res.status(statusCode.OK).json({ message: 'Invite successfully' });
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });

@@ -6,12 +6,12 @@ class InviteService {
   }
 
   async createLink(group, fromUser) {
-    let expireDate = new Date();
+    const expireDate = new Date();
     expireDate.setDate(expireDate.getDate() + 7);
     const newLink = await this.model({
       group,
       fromUser,
-      expireDate
+      expireDate,
     });
     return newLink.save();
   }
@@ -19,14 +19,14 @@ class InviteService {
   async getLink(group, fromUser) {
     return this.model.findOne({
       group,
-      fromUser
-    }, {__v: 0, _id: 0}).lean();
+      fromUser,
+    }, { __v: 0, _id: 0 }).lean();
   }
 
   async findByUrl(url) {
     return this.model.findOne({
       url,
-    }, {__v: 0, _id: 0}).lean();
+    }, { __v: 0, _id: 0 }).lean();
   }
 }
 

@@ -23,8 +23,8 @@ function sendConfirmationEmail(user) {
   }).catch(err => console.log(err));
 }
 
-function sendInviteLink(email, group) {
-  const html = contentOfInviteLink(group);
+function sendInviteLink(email, link) {
+  const html = contentOfInviteLink(link);
   transport.sendMail({
     from: config.QUIZARD_MAIL,
     to: email,
