@@ -30,7 +30,7 @@ class AuthController {
 
     try {
       // await this.service.updateRefreshToken(user.email, refreshToken);
-      return res.status(statusCode.OK).json({ message: 'Login sucessfully', accessToken });
+      return res.status(statusCode.OK).json({ message: 'Login sucessfully', user, accessToken });
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
