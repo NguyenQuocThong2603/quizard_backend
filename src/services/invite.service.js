@@ -15,6 +15,13 @@ class InviteService {
     });
     return newLink.save();
   }
+
+  async getLink(group, fromUser) {
+    return this.model.findOne({
+      group,
+      fromUser
+    }, {__v: 0, _id: 0}).lean();
+  }
 }
 
 export default new InviteService(InviteLink);

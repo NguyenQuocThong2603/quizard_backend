@@ -18,6 +18,14 @@ class InviteController {
     }
     return res.status(statusCode.CREATED).json({ message: 'Create invite link successfully', link: linkDTO });
   }
+
+  async getLink(req, res) {
+    const {_id: fromUser} = req.user;
+    const {group} = req.body;
+    let link = await this.service.getLink(group, fromUser);
+    if (link == null) link = await this.service.createLink(group, fromUser);
+    return res.status(statusCode.OK).json(link);
+  }
 }
 
 export default new InviteController(inviteService);
