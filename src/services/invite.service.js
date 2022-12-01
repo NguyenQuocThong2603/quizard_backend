@@ -22,6 +22,12 @@ class InviteService {
       fromUser
     }, {__v: 0, _id: 0}).lean();
   }
+
+  async findByUrl(url) {
+    return this.model.findOne({
+      url,
+    }, {__v: 0, _id: 0}).lean();
+  }
 }
 
 export default new InviteService(InviteLink);

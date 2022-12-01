@@ -5,12 +5,12 @@ class GroupService {
     this.model = model;
   }
 
-  // async findGroup(email) {
-  //   const group = await this.model.findOne({
-  //     email,
-  //   });
-  //   return group;
-  // }
+  async find(_id) {
+    const group = await this.model.findOne({
+      _id
+    });
+    return group;
+  }
 
   async findGroupById(groupId) {
     const group = await this.model.findOne({

@@ -26,4 +26,8 @@ groupRouter.delete('/kickUser', (req, res) => {
 groupRouter.post('/inviteByEmail', (req, res) => {
   GroupController.inviteByEmail(req, res);
 });
+
+groupRouter.post('/join', (req, res) => {
+  GroupController.join(req, res);
+});
 export default groupRouter;

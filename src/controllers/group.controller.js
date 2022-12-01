@@ -3,6 +3,7 @@ import _ from 'lodash';
 import statusCode from '../constants/statusCode.js';
 import GroupService from '../services/group.service.js';
 import UserService from '../services/user.service.js';
+import inviteService from '../services/invite.service.js';
 import { sendInviteLink } from '../config/nodemailer.js';
 
 class GroupController {
@@ -22,7 +23,6 @@ class GroupController {
         const ownedGroups = await this.userService.getOwnedGroups(user);
         let setMap = new Map();
         for (const group of ownedGroups.concat(joinedGroups)) setMap.set(group.groupId, group);
-        console.log(setMap);
         groups = [...setMap.values()];
         break;
 
@@ -196,6 +196,21 @@ class GroupController {
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
+  }
+
+  async join(req, res) {
+    const {url} = req.body;
+    const link = await inviteService.findByUrl(url);
+    const group = await this.groupService.find(link.group);
+    
+    const {email} = req.user;
+    const user = await this.userService.findUser(email);
+    if (user.joinedGroups.includes(link.group)) 
+      return res.status(statusCode.OK).json({ message: 'Group already joined', groupId: group.groupId });
+
+    user.joinedGroups.push(link.group);
+    user.save();
+    return res.status(statusCode.OK).json({ message: 'Group joined', groupId: group.groupId });
   }
 }
 

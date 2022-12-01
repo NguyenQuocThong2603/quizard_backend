@@ -3,7 +3,7 @@ import inviteController from '../controllers/invite.controller.js';
 
 const inviteRouter = express.Router();
 
-inviteRouter.get('/', (req, res) => {
+inviteRouter.post('/', (req, res) => {
   inviteController.getLink(req, res);
 });
 
