@@ -1,4 +1,4 @@
-function contentOfInviteLink(group) {
+function contentOfInviteLink(link) {
   const html = `<html>
 <head>
 
@@ -166,7 +166,7 @@ function contentOfInviteLink(group) {
           <!-- start copy -->
           <tr>
             <td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
-              <p style="margin: 0;">Hi, this is your invitation to group ${group.name}. Please click the button below to join the group</p>
+              <p style="margin: 0;">Hi, this is your invitation. Please click the button below to join the group</p>
             </td>
           </tr>
           <!-- end copy -->
@@ -180,7 +180,7 @@ function contentOfInviteLink(group) {
                     <table border="0" cellpadding="0" cellspacing="0">
                       <tr>
                         <td align="center" bgcolor="#1a82e2" style="border-radius: 6px;">
-                          <a href="link" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;">Join group</a>
+                          <a href="${link}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;">Join group</a>
                         </td>
                       </tr>
                     </table>
