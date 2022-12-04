@@ -1,7 +1,7 @@
-import authRouter from './auth.route.js';
-import userRouter from './user.route.js';
-import groupRouter from './group.route.js';
-import inviteRouter from './invite.route.js';
+import authRouter from '../components/auth/auth.route.js';
+import userRouter from '../components/user/user.route.js';
+import groupRouter from '../components/group/group.route.js';
+import inviteRouter from '../components/invite/invite.route.js';
 import passport from '../middlewares/passport.js';
 
 const createRoutes = app => {

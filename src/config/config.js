@@ -10,7 +10,7 @@ const config = {
   EXPIRED_TIME_REFRESH_TOKEN: process.env.EXPIRED_TIME_REFRESH_TOKEN,
   QUIZARD_MAIL: process.env.QUIZARD_MAIL,
   QUIZARD_MAIL_PASSWORD: process.env.QUIZARD_MAIL_PASSWORD,
-  APP_URL: "localhost:3000",
+  APP_URL: 'localhost:3000',
   // APP_URL: "quizard.vercel.app",
 };
 

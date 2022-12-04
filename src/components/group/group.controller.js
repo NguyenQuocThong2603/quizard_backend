@@ -1,42 +1,38 @@
 import { nanoid } from 'nanoid';
 import _ from 'lodash';
-import statusCode from '../constants/statusCode.js';
-import GroupService from '../services/group.service.js';
-import UserService from '../services/user.service.js';
-import inviteService from '../services/invite.service.js';
-import { sendInviteLink } from '../config/nodemailer.js';
+import statusCode from '../../constants/statusCode.js';
+import GroupService from './group.service.js';
+import UserService from '../user/user.service.js';
+import inviteService from '../invite/invite.service.js';
+import { sendInviteLink } from '../../config/nodemailer.js';
 
-class GroupController {
-  constructor(userService, groupService) {
-    this.userService = userService;
-    this.groupService = groupService;
-  }
+const GroupController = {
 
   async list(req, res) {
     const { email } = req.user;
-    const user = await this.userService.findUser(email);
+    const user = await UserService.findUser(email);
     const { category } = req.query;
     let groups = [];
     switch (category) {
       case 'all':
-        const joinedGroups = await this.userService.getJoinedGroups(user);
-        const ownedGroups = await this.userService.getOwnedGroups(user);
+        const joinedGroups = await UserService.getJoinedGroups(user);
+        const ownedGroups = await UserService.getOwnedGroups(user);
         const setMap = new Map();
         for (const group of ownedGroups.concat(joinedGroups)) setMap.set(group.groupId, group);
         groups = [...setMap.values()];
         break;
 
       case 'owned':
-        groups = await this.userService.getOwnedGroups(user);
+        groups = await UserService.getOwnedGroups(user);
         break;
 
       case 'joined':
-        groups = await this.userService.getJoinedGroups(user);
+        groups = await UserService.getJoinedGroups(user);
         break;
     }
-    // const groups = await this.groupService.list();
+    // const groups = await GroupService.list();
     return res.status(200).json(groups);
-  }
+  },
 
   async create(req, res) {
     const { name, description } = req.body;
@@ -46,10 +42,10 @@ class GroupController {
     let group;
     try {
       const groupId = nanoid(10);
-      group = await this.groupService.create(groupId, name, description, owner);
+      group = await GroupService.create(groupId, name, description, owner);
 
       // add user to joined groups & owned groups
-      const user = await this.userService.findUser(owner);
+      const user = await UserService.findUser(owner);
       user.joinedGroups.push(group._id);
       user.ownedGroups.push(group._id);
       user.save();
@@ -65,16 +61,16 @@ class GroupController {
       owner: group.owner,
     };
     return res.status(statusCode.CREATED).json({ message: 'Create group successfully', group: groupDTO });
-  }
+  },
 
   async getDetail(req, res) {
     const { groupId } = req.params;
     try {
-      const group = await this.groupService.findGroupById(groupId);
+      const group = await GroupService.findGroupById(groupId);
       if (!group) {
         return res.status(statusCode.NOT_FOUND).json({ message: 'Group not found' });
       }
-      const users = await this.userService.findAllUsersInGroup(group._id);
+      const users = await UserService.findAllUsersInGroup(group._id);
 
       users.forEach(user => {
         if (user.email === group.owner) {
@@ -96,20 +92,20 @@ class GroupController {
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
-  }
+  },
 
   async changeRole(req, res) {
     const { roleWantToChange, groupId, email } = req.body;
     if (roleWantToChange === 'Member') {
       try {
-        const group = await this.groupService.findGroupById(groupId);
+        const group = await GroupService.findGroupById(groupId);
         if (!group) {
           return res.status(statusCode.NOT_FOUND).json({ message: 'Group not found' });
         }
         group.roles = _.difference(group.roles, [email]);
         await group.save();
 
-        const users = await this.userService.findAllUsersInGroup(group._id);
+        const users = await UserService.findAllUsersInGroup(group._id);
 
         users.forEach(user => {
           if (user.email === group.owner) {
@@ -126,13 +122,13 @@ class GroupController {
       }
     } else {
       try {
-        const group = await this.groupService.findGroupById(groupId);
+        const group = await GroupService.findGroupById(groupId);
         if (!group) {
           return res.status(statusCode.NOT_FOUND).json({ message: 'Group not found' });
         }
         group.roles.push(email);
         await group.save();
-        const users = await this.userService.findAllUsersInGroup(group._id);
+        const users = await UserService.findAllUsersInGroup(group._id);
 
         users.forEach(user => {
           if (user.email === group.owner) {
@@ -148,17 +144,17 @@ class GroupController {
         return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
       }
     }
-  }
+  },
 
   async kickUser(req, res) {
     const { email, groupId } = req.body;
     try {
-      const kickedUser = await this.userService.findUser(email);
+      const kickedUser = await UserService.findUser(email);
 
       if (!kickedUser) {
         return res.status(statusCode.NOT_FOUND).json({ message: 'User not found' });
       }
-      const group = await this.groupService.findGroupById(groupId);
+      const group = await GroupService.findGroupById(groupId);
       if (!group) {
         return res.status(statusCode.NOT_FOUND).json({ message: 'Group not found' });
       }
@@ -166,7 +162,7 @@ class GroupController {
       kickedUser.joinedGroups = _.filter(kickedUser.joinedGroups, g => !g.equals(group._id));
       await kickedUser.save();
 
-      const users = await this.userService.findAllUsersInGroup(group._id);
+      const users = await UserService.findAllUsersInGroup(group._id);
 
       users.forEach(user => {
         if (user.email === group.owner) {
@@ -181,7 +177,7 @@ class GroupController {
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
-  }
+  },
 
   async inviteByEmail(req, res) {
     const { email, link } = req.body;
@@ -191,21 +187,21 @@ class GroupController {
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
-  }
+  },
 
   async join(req, res) {
     const { url } = req.body;
     const link = await inviteService.findByUrl(url);
-    const group = await this.groupService.find(link.group);
+    const group = await GroupService.find(link.group);
 
     const { email } = req.user;
-    const user = await this.userService.findUser(email);
+    const user = await UserService.findUser(email);
     if (user.joinedGroups.includes(link.group)) { return res.status(statusCode.OK).json({ message: 'Group already joined', groupId: group.groupId }); }
 
     user.joinedGroups.push(link.group);
     user.save();
     return res.status(statusCode.OK).json({ message: 'Group joined', groupId: group.groupId });
-  }
-}
+  },
+};
 
-export default new GroupController(UserService, GroupService);
+export default GroupController;

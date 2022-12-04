@@ -2,20 +2,17 @@ import bcrypt from 'bcrypt';
 import moment from 'moment';
 import jwt from 'jsonwebtoken';
 import { nanoid } from 'nanoid';
-import { sendConfirmationEmail } from '../config/nodemailer.js';
-import UserService from '../services/user.service.js';
-import statusCode from '../constants/statusCode.js';
-import config from '../config/config.js';
+import { sendConfirmationEmail } from '../../config/nodemailer.js';
+import UserService from '../user/user.service.js';
+import statusCode from '../../constants/statusCode.js';
+import config from '../../config/config.js';
 
-class AuthController {
-  constructor(service) {
-    this.service = service;
-  }
+const AuthController = {
 
   createToken(user) {
     const token = jwt.sign(user, config.JWT_SECRET);
     return token;
-  }
+  },
 
   async login(req, res) {
     if (req.message) {
@@ -29,12 +26,12 @@ class AuthController {
     // const refreshToken = this.createToken(user, config.EXPIRED_TIME_REFRESH_TOKEN);
 
     try {
-      // await this.service.updateRefreshToken(user.email, refreshToken);
+      // await UserService.updateRefreshToken(user.email, refreshToken);
       return res.status(statusCode.OK).json({ message: 'Login sucessfully', user, accessToken });
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
-  }
+  },
 
   async register(req, res) {
     const { email, password, name, gender, dob } = req.body;
@@ -47,7 +44,7 @@ class AuthController {
     }
 
     // check if user already exists
-    let user = await this.service.findUser(email);
+    let user = await UserService.findUser(email);
     if (user !== null) {
       return res.status(statusCode.BAD_REQUEST).json({ message: 'Email already exists' });
     }
@@ -59,7 +56,7 @@ class AuthController {
     const confirmationCode = nanoid(10);
     // create user
     try {
-      user = await this.service.createUser(email, hash, name, gender, dob, confirmationCode);
+      user = await UserService.createUser(email, hash, name, gender, dob, confirmationCode);
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
@@ -73,12 +70,12 @@ class AuthController {
     };
     sendConfirmationEmail(user);
     return res.status(statusCode.CREATED).json({ message: 'Create user successfully', user: userDTO });
-  }
+  },
 
   async verify(req, res) {
     const { confirmationCode } = req.params;
     try {
-      const user = await this.service.findUserByConfirmationCode(confirmationCode);
+      const user = await UserService.findUserByConfirmationCode(confirmationCode);
 
       if (user) {
         user.isVerified = true;
@@ -89,7 +86,7 @@ class AuthController {
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
-  }
-}
+  },
+};
 
-export default new AuthController(UserService);
+export default AuthController;

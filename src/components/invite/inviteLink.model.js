@@ -1,4 +1,6 @@
 import mongoose from 'mongoose';
+import { nanoid } from 'nanoid';
+
 const { Schema } = mongoose;
 
 const InviteLinkSchema = new Schema({

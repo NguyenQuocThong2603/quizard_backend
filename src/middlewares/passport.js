@@ -2,7 +2,7 @@ import passport from 'passport';
 import bcrypt from 'bcrypt';
 import LocalStrategy from 'passport-local';
 import Jwt from 'passport-jwt';
-import UserService from '../services/user.service.js';
+import UserService from '../components/user/user.service.js';
 import config from '../config/config.js';
 
 passport.use(new LocalStrategy({ usernameField: 'email', sessionStorage: false, passReqToCallback: true }, async (req, email, password, cb) => {

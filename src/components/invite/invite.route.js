@@ -1,5 +1,5 @@
 import express from 'express';
-import inviteController from '../controllers/invite.controller.js';
+import inviteController from './invite.controller.js';
 
 const inviteRouter = express.Router();
 
