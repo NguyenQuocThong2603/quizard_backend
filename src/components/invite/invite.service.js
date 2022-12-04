@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import InviteLink from '../invite/inviteLink.model.js';
+import InviteLink from './inviteLink.model.js';
 
 const InviteService = {
 
