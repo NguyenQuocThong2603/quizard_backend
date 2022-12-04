@@ -1,4 +1,5 @@
 import InviteLink from '../models/inviteLink.model.js';
+import { nanoid } from 'nanoid';
 
 class InviteService {
   constructor(model) {
@@ -8,7 +9,9 @@ class InviteService {
   async createLink(group, fromUser) {
     const expireDate = new Date();
     expireDate.setDate(expireDate.getDate() + 7);
+    const url = nanoid(15);
     const newLink = await this.model({
+      url,
       group,
       fromUser,
       expireDate,
