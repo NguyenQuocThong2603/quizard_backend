@@ -17,7 +17,7 @@ const PresentationService = {
   },
 
   async list(groupId) {
-    const presentations = await Presentation.find({groupId}).lean();
+    const presentations = await Presentation.find({ groupId }).lean();
     return presentations;
   },
 
@@ -25,15 +25,15 @@ const PresentationService = {
     const newPresentation = await Presentation({
       name,
       owner,
-      group
+      group,
     });
     return newPresentation.save();
   },
 
   async CountNewPrensentation(defaultName) {
-    const regexp = new RegExp("^"+ defaultName);
-    return Presentation.count({name: regexp});
-  }
+    const regexp = new RegExp(`^${defaultName}`);
+    return Presentation.count({ name: regexp });
+  },
 };
 
 export default PresentationService;
