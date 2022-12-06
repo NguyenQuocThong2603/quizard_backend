@@ -30,10 +30,14 @@ const PresentationService = {
     return newPresentation.save();
   },
 
-  async CountNewPrensentation(defaultName) {
+  async countNewPrensentation(defaultName) {
     const regexp = new RegExp("^"+ defaultName);
     return Presentation.count({name: regexp});
-  }
+  },
+
+  async delete(_id) {
+    return Presentation.deleteOne({_id});
+  },  
 };
 
 export default PresentationService;

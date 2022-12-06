@@ -15,19 +15,8 @@ presentationRouter.get('/detail/:presentationId', (req, res) => {
   PresentationController.getDetail(req, res);
 });
 
-presentationRouter.post('/changeRole', (req, res) => {
-  PresentationController.changeRole(req, res);
+presentationRouter.post('/delete', (req, res) => {
+  PresentationController.delete(req, res);
 });
 
-presentationRouter.post('/kickUser', (req, res) => {
-  PresentationController.kickUser(req, res);
-});
-
-presentationRouter.post('/inviteByEmail', (req, res) => {
-  PresentationController.inviteByEmail(req, res);
-});
-
-presentationRouter.post('/join', (req, res) => {
-  PresentationController.join(req, res);
-});
 export default presentationRouter;
