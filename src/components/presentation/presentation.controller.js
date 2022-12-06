@@ -1,10 +1,7 @@
-import { nanoid } from 'nanoid';
 import _ from 'lodash';
 import statusCode from '../../constants/statusCode.js';
-import PresentationService from '../presentation/presentation.service.js';
+import PresentationService from './presentation.service.js';
 import UserService from '../user/user.service.js';
-import inviteService from '../invite/invite.service.js';
-import { sendInviteLink } from '../../config/nodemailer.js';
 
 const PresentationController = {
 
@@ -22,7 +19,7 @@ const PresentationController = {
     const defaultName = "New presentation";
     const newPresentationCount = await PresentationService.countNewPrensentation(defaultName);
     const name = `${defaultName} (${newPresentationCount})`;
-    
+
     // create presentation
     let presentation;
     try {
@@ -73,6 +70,21 @@ const PresentationController = {
         joinedUser: users,
       };
       return res.status(statusCode.OK).json(presentationDTO);
+    } catch (err) {
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
+    }
+  },
+  async saveListSlide(req, res) {
+    const { presentationId, listSlide } = req.body;
+    try {
+      const presentation = await PresentationService.find(presentationId);
+      if (!presentation) {
+        return res.status(statusCode.NOT_FOUND).json({ message: 'Presentation not found' });
+      }
+      presentation.slides = listSlide;
+      presentation.modified = Date.now();
+      await presentation.save();
+      return res.status(statusCode.OK).json({ message: 'Save list slide successfully', presentation });
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
