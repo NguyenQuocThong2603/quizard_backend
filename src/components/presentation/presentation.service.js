@@ -19,7 +19,7 @@ const PresentationService = {
   async list(groupId) {
     const transform = (doc, id) => (doc == null) ? "Unknown" : doc.name;
     const presentations = await Presentation.find({ groupId })
-      .populate([{path: "owner", transform}]).lean();
+      .populate([{path: "owner", transform}]); 
     return presentations;
   },
 
