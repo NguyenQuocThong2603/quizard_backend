@@ -23,4 +23,8 @@ presentationRouter.post('/saveListSlide', (req, res) => {
   PresentationController.saveListSlide(req, res);
 });
 
+presentationRouter.get('/join', (req, res) => {
+  PresentationController.join(req, res);
+});
+
 export default presentationRouter;

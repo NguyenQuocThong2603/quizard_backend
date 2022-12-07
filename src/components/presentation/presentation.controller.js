@@ -71,6 +71,12 @@ const PresentationController = {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
   },
+
+  async join(req, res) {
+    const { _id } = req.body;
+    // TODO: check for user in the group
+    return res.status(statusCode.OK).send();
+  },
 };
 
 export default PresentationController;
