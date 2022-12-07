@@ -4,10 +4,10 @@ const { Schema } = mongoose;
 
 const PresentationSchema = new Schema({
   name: { type: String, required: true },
-  owner: { type: String, required: true },
+  owner: { type: Schema.Types.ObjectId, ref: "User", required: true },
   group: { type: String, required: true },
-  modified: { type: Date, default: Date.now() },
-  created: { type: Date, default: Date.now() },
+  modified: { type: Date, default: new Date() },
+  created: { type: Date, default: new Date() },
   slides: { type: Array, default: [] },
 });
 
