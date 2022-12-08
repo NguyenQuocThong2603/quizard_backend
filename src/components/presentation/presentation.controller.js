@@ -60,7 +60,7 @@ const PresentationController = {
   async save(req, res) {
     const { presentation } = req.body;
     try {
-      const presentationInDB = await PresentationService.find(presentation._id);
+      const presentationInDB = await PresentationService.find(presentation.id);
       if (!presentationInDB) {
         return res.status(statusCode.NOT_FOUND).json({ message: 'Presentation not found' });
       }
