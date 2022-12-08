@@ -17,9 +17,9 @@ const PresentationService = {
   },
 
   async list(groupId) {
-    const transform = (doc, id) => (doc == null) ? "Unknown" : doc.name;
+    const transform = (doc, id) => ((doc == null) ? 'Unknown' : doc.name);
     const presentations = await Presentation.find({ groupId })
-      .populate([{path: "owner", transform}]); 
+      .populate([{ path: 'owner', transform }]);
     return presentations;
   },
 
@@ -30,7 +30,7 @@ const PresentationService = {
       owner,
       group,
       created: time,
-      modified: time
+      modified: time,
     });
     return newPresentation.save();
   },
@@ -41,8 +41,8 @@ const PresentationService = {
   },
 
   async delete(_id) {
-    return Presentation.deleteOne({_id});
-  }
+    return Presentation.deleteOne({ _id });
+  },
 };
 
 export default PresentationService;

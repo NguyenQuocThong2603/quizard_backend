@@ -19,8 +19,8 @@ presentationRouter.post('/delete', (req, res) => {
   PresentationController.delete(req, res);
 });
 
-presentationRouter.post('/saveListSlide', (req, res) => {
-  PresentationController.saveListSlide(req, res);
+presentationRouter.post('/save', (req, res) => {
+  PresentationController.save(req, res);
 });
 
 presentationRouter.post('/live', (req, res) => {

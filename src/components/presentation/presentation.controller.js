@@ -16,7 +16,7 @@ const PresentationController = {
     const { _id: owner } = req.user;
 
     // count number of name-unedited presentations
-    const defaultName = "New presentation";
+    const defaultName = 'New presentation';
     const newPresentationCount = await PresentationService.countNewPrensentation(defaultName);
     const name = `${defaultName} (${newPresentationCount})`;
 
@@ -56,16 +56,19 @@ const PresentationController = {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
   },
-  async saveListSlide(req, res) {
-    const { presentationId, listSlide } = req.body;
+
+  async save(req, res) {
+    const { presentation } = req.body;
     try {
-      const presentation = await PresentationService.find(presentationId);
-      if (!presentation) {
+      const presentationInDB = await PresentationService.find(presentation.id);
+      if (!presentationInDB) {
         return res.status(statusCode.NOT_FOUND).json({ message: 'Presentation not found' });
       }
-      presentation.slides = listSlide;
-      presentation.modified = Date.now();
-      await presentation.save();
+      presentationInDB.question = presentation.question;
+      presentationInDB.name = presentation.name;
+      presentationInDB.slides = presentation.slides;
+      presentationInDB.modified = Date.now();
+      await presentationInDB.save();
       return res.status(statusCode.OK).json({ message: 'Save list slide successfully', presentation });
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
