@@ -38,7 +38,7 @@ const PresentationController = {
     console.log(_id);
     try {
       const result = await PresentationService.delete(_id);
-      return res.status(statusCode.OK).json(result);      
+      return res.status(statusCode.OK).json(result);
     } catch (error) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json(err);
     }
@@ -69,6 +69,20 @@ const PresentationController = {
       return res.status(statusCode.OK).json({ message: 'Save list slide successfully', presentation });
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
+    }
+  },
+
+  async live(req, res) {
+    const { id } = req.body;
+    try {
+      const presentation = await PresentationService.find(id);
+      presentation.isLive = true;
+      await presentation.save(); 
+      return res.status(statusCode.OK).json(presentation);
+      
+    } catch (error) {
+      console.log(error);
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json(error);
     }
   },
 

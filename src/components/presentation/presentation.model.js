@@ -10,6 +10,7 @@ const PresentationSchema = new Schema({
   created: { type: Date, required: true },
   slides: { type: Array, default: [{question: "Question", options: []}] },
   isLive: { type: Boolean, default: false },
+  currentSlideIndex: { type: Number, default: 0 },
 });
 
 PresentationSchema.set('toJSON', {
