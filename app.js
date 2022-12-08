@@ -5,6 +5,7 @@ import cors from 'cors';
 import config from './src/config/config.js';
 import connectDB from './src/config/db.js';
 import createRoutes from './src/routes/index.js';
+import io from './src/components/socket/server.js';
 
 const app = express();
 
