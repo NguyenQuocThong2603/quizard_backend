@@ -27,8 +27,12 @@ presentationRouter.post('/live', (req, res) => {
   PresentationController.live(req, res);
 });
 
-presentationRouter.get('/join', (req, res) => {
+presentationRouter.post('/join', (req, res) => {
   PresentationController.join(req, res);
+});
+
+presentationRouter.post('/choose', (req, res) => {
+  PresentationController.choose(req, res);
 });
 
 export default presentationRouter;

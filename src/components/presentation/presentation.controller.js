@@ -90,9 +90,35 @@ const PresentationController = {
   },
 
   async join(req, res) {
-    const { _id } = req.body;
+    const { id } = req.body;
     // TODO: check for user in the group
-    return res.status(statusCode.OK).send();
+    try {
+      const presentation = await PresentationService.find(id);
+      const slideIndex = presentation.currentSlideIndex;
+      const slide = presentation.slides[slideIndex];
+      return res.status(statusCode.OK).json({slide, slideIndex});
+      
+    } catch (error) {
+      console.log(error);
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json(error);
+    }
+  },
+
+  async choose(req, res) {
+    const { id, slideIndex, optionIndex } = req.body;
+    console.log("BODY", req.body);
+    // TODO: check for user in the group
+    try {
+      const presentation = await PresentationService.find(id);
+      presentation.slides[slideIndex].options[optionIndex].vote += 1;
+      await presentation.save();
+      const slide = presentation.slides[slideIndex];
+      return res.status(statusCode.OK).json(slide);
+      
+    } catch (error) {
+      console.log(error);
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json(error);
+    }
   },
 };
 
