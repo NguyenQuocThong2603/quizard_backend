@@ -7,15 +7,15 @@ presentationRouter.get('/', (req, res) => {
   PresentationController.list(req, res);
 });
 
-presentationRouter.post('/create', (req, res) => {
+presentationRouter.post('/', (req, res) => {
   PresentationController.create(req, res);
 });
 
-presentationRouter.get('/detail/:presentationId', (req, res) => {
+presentationRouter.get('/:presentationId', (req, res) => {
   PresentationController.getDetail(req, res);
 });
 
-presentationRouter.post('/delete', (req, res) => {
+presentationRouter.delete('/delete', (req, res) => {
   PresentationController.delete(req, res);
 });
 

@@ -7,7 +7,7 @@ const InviteService = {
     const expireDate = new Date();
     expireDate.setDate(expireDate.getDate() + 7);
     const url = nanoid(15);
-    const newLink = await InviteLink({
+    const newLink = InviteLink({
       url,
       group,
       fromUser,

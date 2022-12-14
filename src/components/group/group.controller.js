@@ -30,8 +30,7 @@ const GroupController = {
         groups = await UserService.getJoinedGroups(user);
         break;
     }
-    // const groups = await GroupService.list();
-    return res.status(200).json(groups);
+    return res.status(200).json({ groups });
   },
 
   async create(req, res) {
@@ -53,14 +52,7 @@ const GroupController = {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
 
-    const groupDTO = {
-      _id: group._id,
-      groupId: group.groupId,
-      name: group.name,
-      description: group.description,
-      owner: group.owner,
-    };
-    return res.status(statusCode.CREATED).json({ message: 'Create group successfully', group: groupDTO });
+    return res.status(statusCode.CREATED).json({ group });
   },
 
   async getDetail(req, res) {
@@ -88,7 +80,7 @@ const GroupController = {
         description: group.description,
         joinedUser: users,
       };
-      return res.status(statusCode.OK).json(groupDTO);
+      return res.status(statusCode.OK).json({ group: groupDTO });
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
@@ -116,7 +108,7 @@ const GroupController = {
             user.role = 'Member';
           }
         });
-        return res.status(statusCode.OK).json({ message: 'Change role successfully', joinedUser: users });
+        return res.status(statusCode.OK).json({ joinedUser: users });
       } catch (err) {
         return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
       }
@@ -139,7 +131,7 @@ const GroupController = {
             user.role = 'Member';
           }
         });
-        return res.status(statusCode.OK).json({ message: 'Change role successfully', joinedUser: users });
+        return res.status(statusCode.OK).json({ joinedUser: users });
       } catch (err) {
         return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
       }
@@ -173,7 +165,7 @@ const GroupController = {
           user.role = 'Member';
         }
       });
-      return res.status(statusCode.OK).json({ message: 'Kick user successfully', joinedUser: users });
+      return res.status(statusCode.OK).json({ joinedUser: users });
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
@@ -183,7 +175,7 @@ const GroupController = {
     const { email, link } = req.body;
     try {
       sendInviteLink(email, link);
-      return res.status(statusCode.OK).json({ message: 'Invite successfully' });
+      return res.status(statusCode.OK);
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
@@ -196,11 +188,11 @@ const GroupController = {
 
     const { email } = req.user;
     const user = await UserService.findUser(email);
-    if (user.joinedGroups.includes(link.group)) { return res.status(statusCode.OK).json({ message: 'Group already joined', groupId: group.groupId }); }
+    if (user.joinedGroups.includes(link.group)) { return res.status(statusCode.OK).json({ groupId: group.groupId }); }
 
     user.joinedGroups.push(link.group);
     user.save();
-    return res.status(statusCode.OK).json({ message: 'Group joined', groupId: group.groupId });
+    return res.status(statusCode.OK).json({ groupId: group.groupId });
   },
 };
 

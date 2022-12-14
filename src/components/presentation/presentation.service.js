@@ -3,14 +3,14 @@ import Presentation from './presentation.model.js';
 const PresentationService = {
 
   async find(_id) {
-    const presentation = await Presentation.findOne({
+    const presentation = Presentation.findOne({
       _id,
     });
     return presentation;
   },
 
   async findPresentationById(presentationId) {
-    const presentation = await Presentation.findOne({
+    const presentation = Presentation.findOne({
       presentationId,
     });
     return presentation;
@@ -18,14 +18,14 @@ const PresentationService = {
 
   async list(groupId) {
     const transform = (doc, id) => ((doc == null) ? 'Unknown' : doc.name);
-    const presentations = await Presentation.find({ groupId })
+    const presentations = Presentation.find({ groupId })
       .populate([{ path: 'owner', transform }]);
     return presentations;
   },
 
   async create(name, owner, group) {
     const time = new Date();
-    const newPresentation = await Presentation({
+    const newPresentation = Presentation({
       name,
       owner,
       group,

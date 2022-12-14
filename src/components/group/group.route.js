@@ -7,11 +7,11 @@ groupRouter.get('/', (req, res) => {
   GroupController.list(req, res);
 });
 
-groupRouter.post('/create', (req, res) => {
+groupRouter.post('/', (req, res) => {
   GroupController.create(req, res);
 });
 
-groupRouter.get('/detail/:groupId', (req, res) => {
+groupRouter.get('/:groupId', (req, res) => {
   GroupController.getDetail(req, res);
 });
 

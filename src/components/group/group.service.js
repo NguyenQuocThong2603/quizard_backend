@@ -3,26 +3,26 @@ import Group from './group.model.js';
 const GroupService = {
 
   async find(_id) {
-    const group = await Group.findOne({
+    const group = Group.findOne({
       _id,
     });
     return group;
   },
 
   async findGroupById(groupId) {
-    const group = await Group.findOne({
+    const group = Group.findOne({
       groupId,
     });
     return group;
   },
 
   async list() {
-    const groups = await Group.find({}).lean();
+    const groups = Group.find({}).lean();
     return groups;
   },
 
   async create(groupId, name, description, owner) {
-    const newGroup = await Group({
+    const newGroup = Group({
       groupId,
       name,
       description,
