@@ -14,6 +14,10 @@ const AuthController = {
     return token;
   },
 
+  async check(req, res) {
+    return res.status(statusCode.OK).send();
+  },
+
   async login(req, res) {
     if (req.message) {
       if (req.message === 'Invalid username or password') { return res.status(statusCode.BAD_REQUEST).json({ message: req.message }); }

@@ -10,6 +10,10 @@ authRouter.post('/login', passport.authenticate('local', {
   AuthController.login(req, res);
 });
 
+authRouter.post('/check', passport.authenticate('jwt', { session: false }), (req, res) => {
+  AuthController.check(req, res);
+});
+
 authRouter.get('/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
 
 authRouter.get('/google/redirect', passport.authenticate('google', { session: false }), (req, res) => {

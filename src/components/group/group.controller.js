@@ -175,7 +175,7 @@ const GroupController = {
     const { email, link } = req.body;
     try {
       sendInviteLink(email, link);
-      return res.status(statusCode.OK);
+      return res.status(statusCode.OK).send();
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
