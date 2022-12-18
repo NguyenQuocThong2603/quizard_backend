@@ -11,6 +11,8 @@ const config = {
   QUIZARD_MAIL: process.env.QUIZARD_MAIL,
   QUIZARD_MAIL_PASSWORD: process.env.QUIZARD_MAIL_PASSWORD,
   APP_URL: 'localhost:3000',
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
   // APP_URL: "quizard.vercel.app",
 };
 

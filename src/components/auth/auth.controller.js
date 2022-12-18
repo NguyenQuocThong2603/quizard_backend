@@ -87,6 +87,23 @@ const AuthController = {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
   },
+
+  async googleLogin(req, res) {
+    try {
+      const { user } = req;
+      const accessToken = this.createToken(user);
+      const userValue = JSON.stringify(user);
+      res.cookie('accessToken', accessToken, {
+        maxAge: 5000, // Lifetime
+      }).cookie('user', userValue, {
+        maxAge: 5000, // Lifetime
+      });
+      console.log(accessToken);
+      res.redirect('http://localhost:3000/dashboard');
+    } catch (err) {
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
+    }
+  },
 };
 
 export default AuthController;
