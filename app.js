@@ -15,6 +15,10 @@ app.use(morgan('dev'));
 app.use(cors());
 
 createRoutes(app);
+
+app.get('/', (req, res) => [
+  res.send('heelo'),
+]);
 connectDB();
 const port = config.PORT;
 app.listen(port, console.log(`Server is starting at ${port}`));

@@ -3,7 +3,7 @@ import _ from 'lodash';
 import statusCode from '../../constants/statusCode.js';
 import GroupService from './group.service.js';
 import UserService from '../user/user.service.js';
-import inviteService from '../invite/invite.service.js';
+import LinkService from '../link/link.service.js';
 import { sendInviteLink } from '../../config/nodemailer.js';
 
 const GroupController = {
@@ -183,7 +183,7 @@ const GroupController = {
 
   async join(req, res) {
     const { url } = req.body;
-    const link = await inviteService.findByUrl(url);
+    const link = await LinkService.findByUrl(url);
     const group = await GroupService.find(link.group);
 
     const { email } = req.user;

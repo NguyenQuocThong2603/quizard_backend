@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer';
 import contentOfConfirmationEmail from '../constants/contentOfConfirmationEmail.js';
 import contentOfInviteLink from '../constants/contentOfInviteLinkEmail.js';
+import contentOfForgotPasswordEmail from '../constants/contentOfForgotPasswordEmail.js';
 import config from './config.js';
 
 const transport = nodemailer.createTransport({
@@ -33,4 +34,14 @@ function sendInviteLink(email, link) {
   }).catch(err => console.log(err));
 }
 
-export { sendConfirmationEmail, sendInviteLink };
+function sendForgotPasswordMail(email, link, code) {
+  const html = contentOfForgotPasswordEmail(link, code);
+  transport.sendMail({
+    from: config.QUIZARD_MAIL,
+    to: email,
+    subject: 'Reset password',
+    html,
+  }).catch(err => console.log(err));
+}
+
+export { sendConfirmationEmail, sendInviteLink, sendForgotPasswordMail };

@@ -70,6 +70,12 @@ const UserService = {
     await user.populate('ownedGroups');
     return user.ownedGroups;
   },
+
+  async updatePasswordByEmail(email, password) {
+    return User.updateOne({
+      email,
+    }, { password });
+  },
 };
 
 export default UserService;

@@ -2,8 +2,9 @@ import bcrypt from 'bcrypt';
 import moment from 'moment';
 import jwt from 'jsonwebtoken';
 import { nanoid } from 'nanoid';
-import { sendConfirmationEmail } from '../../config/nodemailer.js';
+import { sendConfirmationEmail, sendForgotPasswordMail } from '../../config/nodemailer.js';
 import UserService from '../user/user.service.js';
+import LinkService from '../link/link.service.js';
 import statusCode from '../../constants/statusCode.js';
 import config from '../../config/config.js';
 
@@ -104,6 +105,33 @@ const AuthController = {
       });
       console.log(accessToken);
       res.redirect('http://localhost:3000/dashboard');
+    } catch (err) {
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
+    }
+  },
+  async forgotPassword(req, res) {
+    try {
+      const { email, link } = req.body;
+      const user = await UserService.findUser(email);
+      if (!user) {
+        return res.status(statusCode.NOT_FOUND).json({ message: 'Email not found' });
+      }
+      const url = await LinkService.createForgotPasswordLink(email);
+      sendForgotPasswordMail(email, link, url.url);
+      return res.status(statusCode.OK);
+    } catch (err) {
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
+    }
+  },
+
+  async resetPassword(req, res) {
+    try {
+      const { email, newPassword, url } = req.body;
+      const salt = bcrypt.genSaltSync(10);
+      const hash = bcrypt.hashSync(newPassword, salt);
+      await UserService.updatePasswordByEmail(email, hash);
+      await LinkService.updateLinkStatus(url);
+      return res.status(statusCode.OK);
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }

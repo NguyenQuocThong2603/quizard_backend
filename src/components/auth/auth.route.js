@@ -1,5 +1,6 @@
 import express from 'express';
 import AuthController from './auth.controller.js';
+import LinkController from '../link/link.controller.js';
 import passport from '../../middlewares/passport.js';
 
 const authRouter = express.Router();
@@ -30,5 +31,17 @@ authRouter.get('/accessToken', (req, res) => {
 
 authRouter.get('/confirm/:confirmationCode', (req, res) => {
   AuthController.verify(req, res);
+});
+
+authRouter.post('/forgotPassword', (req, res) => {
+  AuthController.forgotPassword(req, res);
+});
+
+authRouter.post('/resetPassword/check', (req, res) => {
+  LinkController.checkLink(req, res);
+});
+
+authRouter.post('/resetPassword', (req, res) => {
+  AuthController.resetPassword(req, res);
 });
 export default authRouter;
