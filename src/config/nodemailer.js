@@ -14,8 +14,8 @@ const transport = nodemailer.createTransport({
   },
 });
 
-function sendConfirmationEmail(user) {
-  const html = contentOfConfirmationEmail(user);
+function sendConfirmationEmail(user, link) {
+  const html = contentOfConfirmationEmail(user, link);
   transport.sendMail({
     from: config.QUIZARD_MAIL,
     to: user.email,

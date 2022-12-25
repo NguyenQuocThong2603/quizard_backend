@@ -30,4 +30,7 @@ groupRouter.post('/inviteByEmail', (req, res) => {
 groupRouter.post('/join', (req, res) => {
   GroupController.join(req, res);
 });
+groupRouter.delete('/:groupId', (req, res) => {
+  GroupController.deleteGroup(req, res);
+});
 export default groupRouter;

@@ -30,6 +30,13 @@ const GroupService = {
     });
     return newGroup.save();
   },
+
+  async findGroupByIdAndDelete(groupId, owner) {
+    const group = Group.findOneAndDelete({
+      groupId, owner,
+    }, { returnDocument: 'after' }).lean();
+    return group;
+  },
 };
 
 export default GroupService;

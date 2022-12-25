@@ -39,7 +39,7 @@ const AuthController = {
   },
 
   async register(req, res) {
-    const { email, password, name, gender, dob } = req.body;
+    const { email, password, name, gender, dob, link } = req.body;
 
     const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
@@ -73,7 +73,7 @@ const AuthController = {
       gender: user.gender,
       dob: user.dob,
     };
-    sendConfirmationEmail(user);
+    sendConfirmationEmail(user, link);
     return res.status(statusCode.CREATED).json({ message: 'Create user successfully', user: userDTO });
   },
 

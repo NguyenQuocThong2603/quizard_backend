@@ -1,6 +1,6 @@
-import config from "../config/config.js";
+import config from '../config/config.js';
 
-function contentOfConfirmationEmail(user) {
+function contentOfConfirmationEmail(user, link) {
   const html = `<html>
 <head>
 
@@ -182,7 +182,7 @@ function contentOfConfirmationEmail(user) {
                     <table border="0" cellpadding="0" cellspacing="0">
                       <tr>
                         <td align="center" bgcolor="#1a82e2" style="border-radius: 6px;">
-                          <a href="https://${config.APP_URL}/verify?token=${user.confirmationCode}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;">Confirm email</a>
+                          <a href="${link}${user.confirmationCode}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;">Confirm email</a>
                         </td>
                       </tr>
                     </table>

@@ -194,6 +194,20 @@ const GroupController = {
     user.save();
     return res.status(statusCode.OK).json({ groupId: group.groupId });
   },
+
+  async deleteGroup(req, res) {
+    try {
+      const { user } = req;
+      const { groupId } = req.params;
+      const group = await GroupService.findGroupByIdAndDelete(groupId, user.email);
+      if (!group) {
+        return res.status(statusCode.FORBIDDEN).json({ message: 'Forbidden' });
+      }
+      return res.status(statusCode.OK).json({ message: 'Delete group succeed' });
+    } catch (err) {
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
+    }
+  },
 };
 
 export default GroupController;
