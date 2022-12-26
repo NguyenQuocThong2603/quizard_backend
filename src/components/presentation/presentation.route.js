@@ -4,7 +4,7 @@ import PresentationController from './presentation.controller.js';
 const presentationRouter = express.Router();
 
 presentationRouter.get('/', (req, res) => {
-  PresentationController.list(req, res);
+  PresentationController.listOwnedPresentation(req, res);
 });
 
 presentationRouter.post('/', (req, res) => {

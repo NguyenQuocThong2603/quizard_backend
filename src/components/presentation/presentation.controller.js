@@ -5,15 +5,19 @@ import UserService from '../user/user.service.js';
 
 const PresentationController = {
 
-  async list(req, res) {
-    const { groupId } = req.body;
-    const presentations = await PresentationService.list(groupId);
-    return res.status(statusCode.OK).json({ presentations });
+  async listOwnedPresentation(req, res) {
+    try {
+      const { user } = req;
+      const presentations = await PresentationService.list(user.id);
+      return res.status(statusCode.OK).json({ presentations });
+    } catch (err) {
+      console.log(err);
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: err.message });
+    }
   },
 
   async create(req, res) {
-    const { groupId: group } = req.body;
-    const { _id: owner } = req.user;
+    const { id: owner } = req.user;
 
     // count number of name-unedited presentations
     const defaultName = 'New presentation';
@@ -23,7 +27,7 @@ const PresentationController = {
     // create presentation
     let presentation;
     try {
-      presentation = await PresentationService.create(name, owner, group);
+      presentation = await PresentationService.create(name, owner);
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: err.message });
     }
@@ -31,10 +35,9 @@ const PresentationController = {
   },
 
   async delete(req, res) {
-    const { _id } = req.body;
-    console.log(req.body);
+    const { id } = req.body;
     try {
-      await PresentationService.delete(_id);
+      await PresentationService.delete(id);
       return res.status(statusCode.OK).send();
     } catch (error) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
@@ -79,7 +82,6 @@ const PresentationController = {
       presentation.isLive = true;
       await presentation.save();
       return res.status(statusCode.OK).json({ presentation });
-
     } catch (error) {
       console.log(error);
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
@@ -94,7 +96,6 @@ const PresentationController = {
       const slideIndex = presentation.currentSlideIndex;
       const slide = presentation.slides[slideIndex];
       return res.status(statusCode.OK).json({ slide, slideIndex });
-
     } catch (error) {
       console.log(error);
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
@@ -110,7 +111,6 @@ const PresentationController = {
       await presentation.save();
       const slide = presentation.slides[slideIndex];
       return res.status(statusCode.OK).json({ slide });
-
     } catch (error) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }

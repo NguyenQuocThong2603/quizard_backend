@@ -4,9 +4,9 @@ import LinkService from './link.service.js';
 
 const LinkController = {
   async createLink(req, res) {
-    const { _id: fromUser } = req.user;
+    const { id: fromUser } = req.user;
     const { groupId } = req.body;
-    const { _id: group } = await GroupService.findGroupById(groupId);
+    const { id: group } = await GroupService.findGroupById(groupId);
     const link = await LinkService.createLink(group, fromUser);
     const linkDTO = {
       url: link.url,
@@ -18,10 +18,10 @@ const LinkController = {
   },
 
   async getLink(req, res) {
-    const { _id: fromUser } = req.user;
+    const { id: fromUser } = req.user;
     const { groupId } = req.body;
     console.log(req.body);
-    const { _id: group } = await GroupService.findGroupById(groupId);
+    const { id: group } = await GroupService.findGroupById(groupId);
     let link = await LinkService.getLink(group, fromUser);
     if (link == null) link = await LinkService.createLink(group, fromUser);
     return res.status(statusCode.OK).json(link);

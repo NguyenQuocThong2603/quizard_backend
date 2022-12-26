@@ -16,19 +16,16 @@ const PresentationService = {
     return presentation;
   },
 
-  async list(groupId) {
-    const transform = (doc, id) => ((doc == null) ? 'Unknown' : doc.name);
-    const presentations = Presentation.find({ groupId })
-      .populate([{ path: 'owner', transform }]);
+  async list(ownerId) {
+    const presentations = Presentation.find({ owner: ownerId }).lean();
     return presentations;
   },
 
-  async create(name, owner, group) {
+  async create(name, owner) {
     const time = new Date();
     const newPresentation = Presentation({
       name,
       owner,
-      group,
       created: time,
       modified: time,
     });

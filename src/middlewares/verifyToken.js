@@ -15,7 +15,7 @@ function verifyToken(req, res, next) {
       const user = await UserService.findUser(payload.user.email);
 
       const userDTO = {
-        _id: user._id,
+        id: user.id,
         email: user.email,
         name: user.name,
         gender: user.gender,
