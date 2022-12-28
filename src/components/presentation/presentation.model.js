@@ -13,7 +13,7 @@ const PresentationSchema = new Schema({
   currentSlideIndex: { type: Number, default: 0 },
 });
 
-mongoose.set('toJSON', {
+PresentationSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString();
     delete returnedObject._id;

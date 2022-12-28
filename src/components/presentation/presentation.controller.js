@@ -5,19 +5,32 @@ import UserService from '../user/user.service.js';
 
 const PresentationController = {
 
-  async listOwnedPresentation(req, res) {
+  async getPresentations(req, res) {
     try {
       const { user } = req;
-      const presentations = await PresentationService.list(user.id);
-      return res.status(statusCode.OK).json({ presentations });
+      const { category } = req.query;
+      let presentations;
+      if (category === 'owned') {
+        presentations = await PresentationService.getOwnedPresentations(user._id);
+      } else {
+        presentations = await PresentationService.getCollaboratePresentations(user._id);
+      }
+      const presentationDTO = [];
+      presentations.forEach(presentation => {
+        const { _id, ...informOfPresentation } = presentation;
+        presentationDTO.push({
+          id: _id,
+          ...informOfPresentation,
+        });
+      });
+      return res.status(statusCode.OK).json({ presentations: presentationDTO });
     } catch (err) {
-      console.log(err);
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: err.message });
     }
   },
 
   async create(req, res) {
-    const { id: owner } = req.user;
+    const { _id: owner } = req.user;
 
     // count number of name-unedited presentations
     const defaultName = 'New presentation';
@@ -38,7 +51,7 @@ const PresentationController = {
     const { id } = req.body;
     try {
       await PresentationService.delete(id);
-      return res.status(statusCode.OK).send();
+      return res.status(statusCode.OK).json();
     } catch (error) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
@@ -111,6 +124,48 @@ const PresentationController = {
       await presentation.save();
       const slide = presentation.slides[slideIndex];
       return res.status(statusCode.OK).json({ slide });
+    } catch (error) {
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
+  },
+
+  async getCollaborators(req, res) {
+    try {
+      const { presentationId } = req.query;
+      const presentation = await PresentationService.getCollaborators(presentationId);
+      if (!presentation) {
+        return res.status(statusCode.NOT_FOUND).json({ message: 'Not found' });
+      }
+      return res.status(statusCode.OK).json({ collaborators: presentation.collaborators });
+    } catch (error) {
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
+  },
+
+  async addCollaborator(req, res) {
+    try {
+      const { presentationId, email } = req.body;
+      const presentation = await PresentationService.find(presentationId);
+      if (!presentation) {
+        return res.status(statusCode.NOT_FOUND).json({ message: 'Not found' });
+      }
+      const user = await UserService.findUser(email);
+
+      if (!user) {
+        return res.status(statusCode.NOT_FOUND).json({ message: 'User not found' });
+      }
+
+      if (presentation.collaborators.some(collaborator => collaborator._id.toString() === user._id.toString())) {
+        return res.status(statusCode.BAD_REQUEST).json({ mesage: 'Email exists' });
+      }
+      presentation.collaborators.push(user._id);
+      await presentation.save();
+      const userDTO = {
+        _id: user._id,
+        email: user.email,
+        name: user.name,
+      };
+      return res.status(statusCode.OK).json({ user: userDTO });
     } catch (error) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }

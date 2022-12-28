@@ -45,8 +45,8 @@ const GroupController = {
 
       // add user to joined groups & owned groups
       const user = await UserService.findUser(owner);
-      user.joinedGroups.push(group.id);
-      user.ownedGroups.push(group.id);
+      user.joinedGroups.push(group._id);
+      user.ownedGroups.push(group._id);
       user.save();
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
@@ -62,7 +62,7 @@ const GroupController = {
       if (!group) {
         return res.status(statusCode.NOT_FOUND).json({ message: 'Group not found' });
       }
-      const users = await UserService.findAllUsersInGroup(group.id);
+      const users = await UserService.findAllUsersInGroup(group._id);
 
       users.forEach(user => {
         if (user.email === group.owner) {
@@ -74,7 +74,7 @@ const GroupController = {
         }
       });
       const groupDTO = {
-        id: group.id,
+        _id: group._id,
         groupId: group.groupId,
         name: group.name,
         description: group.description,
@@ -97,7 +97,7 @@ const GroupController = {
         group.roles = _.difference(group.roles, [email]);
         await group.save();
 
-        const users = await UserService.findAllUsersInGroup(group.id);
+        const users = await UserService.findAllUsersInGroup(group._id);
 
         users.forEach(user => {
           if (user.email === group.owner) {
@@ -120,7 +120,7 @@ const GroupController = {
         }
         group.roles.push(email);
         await group.save();
-        const users = await UserService.findAllUsersInGroup(group.id);
+        const users = await UserService.findAllUsersInGroup(group._id);
 
         users.forEach(user => {
           if (user.email === group.owner) {
@@ -154,7 +154,7 @@ const GroupController = {
       kickedUser.joinedGroups = _.filter(kickedUser.joinedGroups, g => !g.equals(group.id));
       await kickedUser.save();
 
-      const users = await UserService.findAllUsersInGroup(group.id);
+      const users = await UserService.findAllUsersInGroup(group._id);
 
       users.forEach(user => {
         if (user.email === group.owner) {

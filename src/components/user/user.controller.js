@@ -5,7 +5,7 @@ const UserController = {
 
   async profile(req, res) {
     const { user } = req;
-    const userProfile = await UserService.getProfile(user.id);
+    const userProfile = await UserService.getProfile(user._id);
     return res.status(200).json(userProfile);
   },
 
@@ -14,7 +14,7 @@ const UserController = {
     const { name, email, gender, dob } = req.body;
     if (!moment(dob, 'DD-MM-YYYY').isValid()) { return res.status(400).json({ message: 'Invalid date of birth' }); }
     if (gender !== 'Male' && gender !== 'Female') { return res.status(400).json({ message: 'Gender must be one of Male or Female' }); }
-    const updatedUser = await UserService.updateProfile(user.id, {
+    const updatedUser = await UserService.updateProfile(user._id, {
       name,
       // email,
       gender,

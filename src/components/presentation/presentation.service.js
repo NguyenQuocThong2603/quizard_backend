@@ -16,9 +16,20 @@ const PresentationService = {
     return presentation;
   },
 
-  async list(ownerId) {
-    const presentations = Presentation.find({ owner: ownerId }).lean();
+  async getOwnedPresentations(ownerId) {
+    const presentations = Presentation.find({ owner: ownerId }).populate('owner').lean();
     return presentations;
+  },
+
+  async getCollaboratePresentations(collaboratorId) {
+    const presentations = Presentation.find({ collaborators: collaboratorId }).populate('owner').lean();
+    return presentations;
+  },
+
+  async getCollaborators(presentationId) {
+    const collaborators = Presentation.findOne({ _id: presentationId })
+      .populate('collaborators', ['_id', 'name', 'email']).lean();
+    return collaborators;
   },
 
   async create(name, owner) {

@@ -67,7 +67,7 @@ const AuthController = {
     }
 
     const userDTO = {
-      id: user.id,
+      id: user._id,
       email: user.email,
       name: user.name,
       gender: user.gender,
