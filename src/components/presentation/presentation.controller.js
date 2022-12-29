@@ -136,7 +136,14 @@ const PresentationController = {
       if (!presentation) {
         return res.status(statusCode.NOT_FOUND).json({ message: 'Not found' });
       }
-      return res.status(statusCode.OK).json({ collaborators: presentation.collaborators });
+      const collaborators = presentation.collaborators.map(collaborator => {
+        const { _id, ...information } = collaborator;
+        return {
+          id: _id,
+          ...information,
+        };
+      });
+      return res.status(statusCode.OK).json({ collaborators });
     } catch (error) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
@@ -155,19 +162,52 @@ const PresentationController = {
         return res.status(statusCode.NOT_FOUND).json({ message: 'User not found' });
       }
 
+      if (user._id.toString() === presentation.owner.toString()) {
+        return res.status(statusCode.CONFLICT);
+      }
+
       if (presentation.collaborators.some(collaborator => collaborator._id.toString() === user._id.toString())) {
         return res.status(statusCode.BAD_REQUEST).json({ mesage: 'Email exists' });
       }
       presentation.collaborators.push(user._id);
       await presentation.save();
       const userDTO = {
-        _id: user._id,
+        id: user._id,
         email: user.email,
         name: user.name,
       };
       return res.status(statusCode.OK).json({ user: userDTO });
-    } catch (error) {
-      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    } catch (err) {
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: err.message });
+    }
+  },
+  async deleteCollaborator(req, res) {
+    try {
+      const { presentationId, collaboratorId } = req.body;
+
+      const presentation = await PresentationService.findPresentationAndCollaborators(presentationId);
+      if (!presentation) {
+        return res.status(statusCode.NOT_FOUND).json({ message: 'Not found' });
+      }
+      const findCollaborator = presentation.collaborators
+        .find(collaborator => collaboratorId === collaborator._id.toString());
+      if (!findCollaborator) {
+        return res.status(statusCode.BAD_REQUEST).json({ mesage: 'Collaborator does not exist' });
+      }
+      presentation.collaborators = presentation.collaborators
+        .filter(collaborator => findCollaborator._id !== collaborator._id);
+      await presentation.save();
+      const updatedPresentation = await PresentationService.getCollaborators(presentationId);
+      const collaborators = updatedPresentation.collaborators.map(collaborator => {
+        const { _id, ...information } = collaborator;
+        return {
+          id: _id,
+          ...information,
+        };
+      });
+      return res.status(statusCode.OK).json({ collaborators });
+    } catch (err) {
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: err.message });
     }
   },
 };

@@ -43,4 +43,8 @@ presentationRouter.post('/addCollaborator', (req, res) => {
   PresentationController.addCollaborator(req, res);
 });
 
+presentationRouter.delete('/collaborator', (req, res) => {
+  PresentationController.deleteCollaborator(req, res);
+});
+
 export default presentationRouter;

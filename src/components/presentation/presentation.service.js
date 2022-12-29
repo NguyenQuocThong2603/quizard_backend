@@ -9,6 +9,13 @@ const PresentationService = {
     return presentation;
   },
 
+  async findPresentationAndCollaborators(_id) {
+    const presentation = Presentation.findOne({
+      _id,
+    }).populate('collaborators', ['_id', 'name', 'email']);
+    return presentation;
+  },
+
   async findPresentationById(presentationId) {
     const presentation = Presentation.findOne({
       presentationId,
