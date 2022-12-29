@@ -6,7 +6,22 @@ const PresentationSchema = new Schema({
   name: { type: String, required: true },
   owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   collaborators: { type: [Schema.Types.ObjectId], ref: 'User', default: [] },
-  slides: { type: [{ question: String, options: [{ text: String, vote: Number }] }], default: [{ question: '', options: [{ text: '', vote: 0 }] }] },
+  slides: {
+    type: [Object,
+      {
+        type: { type: String, enum: ['Multiplechoice', 'Heading', 'Paragraph'] },
+        question: String,
+        options: [String],
+        header: String,
+        content: String,
+      },
+    ],
+    default: [{
+      type: 'Multiplechoice',
+      question: '',
+      options: ['New option'],
+    }],
+  },
   modified: { type: Date, require: true },
   created: { type: Date, required: true },
   isLive: { type: Boolean, default: false },
