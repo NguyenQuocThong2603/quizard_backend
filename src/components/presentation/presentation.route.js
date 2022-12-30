@@ -19,6 +19,10 @@ presentationRouter.get('/chart', (req, res) => {
   PresentationController.getChartData(req, res);
 });
 
+presentationRouter.get('/latestChart', (req, res) => {
+  PresentationController.getLatestChartData(req, res);
+});
+
 presentationRouter.get('/:presentationId', (req, res) => {
   PresentationController.getDetail(req, res);
 });

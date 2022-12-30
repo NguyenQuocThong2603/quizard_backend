@@ -86,7 +86,7 @@ const PresentationController = {
       await presentationInDB.save();
       return res.status(statusCode.OK).json({ presentation });
     } catch (err) {
-      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: er.mesage });
     }
   },
 
@@ -123,7 +123,7 @@ const PresentationController = {
         }))
       }));
 
-      const newSession = await SessionService.create(hosts, results, slideToResultMap);
+      const newSession = await SessionService.create(hosts, presentation.id, results, slideToResultMap);
       await PresentationService.updateCurrentSlideIndex(presentation.id, 0);
       await PresentationService.updateCurrentSession(presentation.id, newSession);
       return res.status(statusCode.OK).send();
@@ -187,6 +187,24 @@ const PresentationController = {
       const session = await SessionService.find(sessionId);
       const resultIndex = session.slideToResultMap[`${slideIndex}`];
 
+      // respond current chart: [ {text: string, voteCount: int} ]
+      const chart = await SessionService.getChartData(session, resultIndex);
+      
+      return res.status(statusCode.OK).json({ chart });
+    } catch (error) {
+      console.log(error);
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
+  },
+
+  async getLatestChartData(req, res) {
+    try {
+      // get info
+      const { id, slideIndex } = req.query;
+      const session = await SessionService.findLatestForPresentation(id);
+      if (!session) return res.status(statusCode.OK).json({ chart: null });
+
+      const resultIndex = session.slideToResultMap[`${slideIndex}`];
       // respond current chart: [ {text: string, voteCount: int} ]
       const chart = await SessionService.getChartData(session, resultIndex);
       

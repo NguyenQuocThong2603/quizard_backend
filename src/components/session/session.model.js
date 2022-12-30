@@ -4,6 +4,7 @@ const { Schema } = mongoose;
 
 const SessionSchema = new Schema({
   hosts: { type: [String], required: true },
+  presentationId: { type: Schema.Types.ObjectId, required: true },
   date: { type: Date, required: true },
   chats: {
     type: [{

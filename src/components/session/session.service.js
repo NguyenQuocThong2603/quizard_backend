@@ -10,10 +10,15 @@ const SessionService = {
     return Session.findOne({ _id: id });
   },
 
-  async create(hosts, results, slideToResultMap) {
+  async findLatestForPresentation(presentationId) {
+    return Session.findOne({ presentationId });
+  },
+  
+  async create(hosts, presentationId, results, slideToResultMap) {
     const date = new Date();
     const newSession = Session({
       hosts,
+      presentationId,
       date,
       results,
       slideToResultMap
