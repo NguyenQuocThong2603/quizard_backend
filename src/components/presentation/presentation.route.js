@@ -4,11 +4,15 @@ import PresentationController from './presentation.controller.js';
 const presentationRouter = express.Router();
 
 presentationRouter.get('/', (req, res) => {
-  PresentationController.list(req, res);
+  PresentationController.getPresentations(req, res);
 });
 
 presentationRouter.post('/', (req, res) => {
   PresentationController.create(req, res);
+});
+
+presentationRouter.get('/collaborators', (req, res) => {
+  PresentationController.getCollaborators(req, res);
 });
 
 presentationRouter.get('/:presentationId', (req, res) => {
@@ -39,5 +43,12 @@ presentationRouter.post('/vote', (req, res) => {
   PresentationController.vote(req, res);
 });
 
+presentationRouter.post('/addCollaborator', (req, res) => {
+  PresentationController.addCollaborator(req, res);
+});
+
+presentationRouter.delete('/collaborator', (req, res) => {
+  PresentationController.deleteCollaborator(req, res);
+});
 
 export default presentationRouter;

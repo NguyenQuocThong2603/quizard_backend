@@ -54,7 +54,7 @@ passport.use(new GoogleStrategy(
     try {
       const user = await User.findOne({
         email: profile.emails[0].value,
-      }).lean();
+      });
       if (user) {
         return cb(null, user);
       }

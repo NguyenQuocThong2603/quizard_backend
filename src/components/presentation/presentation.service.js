@@ -9,11 +9,34 @@ const PresentationService = {
     return presentation;
   },
 
-  async list(groupId) {
-    const transform = (doc, id) => ((doc == null) ? 'Unknown' : doc.name);
-    const presentations = Presentation.find({ groupId })
-      .populate([{ path: 'owner', transform }]);
+  async findPresentationAndCollaborators(_id) {
+    const presentation = Presentation.findOne({
+      _id,
+    }).populate('collaborators', ['_id', 'name', 'email']);
+    return presentation;
+  },
+
+  async findPresentationById(presentationId) {
+    const presentation = Presentation.findOne({
+      presentationId,
+    });
+    return presentation;
+  },
+
+  async getOwnedPresentations(ownerId) {
+    const presentations = Presentation.find({ owner: ownerId }).populate('owner').lean();
     return presentations;
+  },
+
+  async getCollaboratePresentations(collaboratorId) {
+    const presentations = Presentation.find({ collaborators: collaboratorId }).populate('owner').lean();
+    return presentations;
+  },
+
+  async getCollaborators(presentationId) {
+    const collaborators = Presentation.findOne({ _id: presentationId })
+      .populate('collaborators', ['_id', 'name', 'email']).lean();
+    return collaborators;
   },
 
   async create(name, owner) {

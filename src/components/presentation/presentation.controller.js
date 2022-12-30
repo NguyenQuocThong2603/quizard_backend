@@ -6,10 +6,28 @@ import SessionService from '../session/session.service.js';
 
 const PresentationController = {
 
-  async list(req, res) {
-    const { groupId } = req.body;
-    const presentations = await PresentationService.list(groupId);
-    return res.status(statusCode.OK).json({ presentations });
+  async getPresentations(req, res) {
+    try {
+      const { user } = req;
+      const { category } = req.query;
+      let presentations;
+      if (category === 'owned') {
+        presentations = await PresentationService.getOwnedPresentations(user._id);
+      } else {
+        presentations = await PresentationService.getCollaboratePresentations(user._id);
+      }
+      const presentationDTO = [];
+      presentations.forEach(presentation => {
+        const { _id, ...informOfPresentation } = presentation;
+        presentationDTO.push({
+          id: _id,
+          ...informOfPresentation,
+        });
+      });
+      return res.status(statusCode.OK).json({ presentations: presentationDTO });
+    } catch (err) {
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: err.message });
+    }
   },
 
   async create(req, res) {
@@ -31,11 +49,10 @@ const PresentationController = {
   },
 
   async delete(req, res) {
-    const { _id } = req.body;
-    console.log(req.body);
+    const { id } = req.body;
     try {
-      await PresentationService.delete(_id);
-      return res.status(statusCode.OK).send();
+      await PresentationService.delete(id);
+      return res.status(statusCode.OK).json();
     } catch (error) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
@@ -145,9 +162,90 @@ const PresentationController = {
         voteCount: option.votes.length
       }))
       return res.status(statusCode.OK).json({ chart });
-
     } catch (error) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
+  },
+  
+  async getCollaborators(req, res) {
+    try {
+      const { presentationId } = req.query;
+      const presentation = await PresentationService.getCollaborators(presentationId);
+      if (!presentation) {
+        return res.status(statusCode.NOT_FOUND).json({ message: 'Not found' });
+      }
+      const collaborators = presentation.collaborators.map(collaborator => {
+        const { _id, ...information } = collaborator;
+        return {
+          id: _id,
+          ...information,
+        };
+      });
+      return res.status(statusCode.OK).json({ collaborators });
+    } catch (error) {
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
+  },
+
+  async addCollaborator(req, res) {
+    try {
+      const { presentationId, email } = req.body;
+      const presentation = await PresentationService.find(presentationId);
+      if (!presentation) {
+        return res.status(statusCode.NOT_FOUND).json({ message: 'Not found' });
+      }
+      const user = await UserService.findUser(email);
+
+      if (!user) {
+        return res.status(statusCode.NOT_FOUND).json({ message: 'User not found' });
+      }
+
+      if (user._id.toString() === presentation.owner.toString()) {
+        return res.status(statusCode.CONFLICT);
+      }
+
+      if (presentation.collaborators.some(collaborator => collaborator._id.toString() === user._id.toString())) {
+        return res.status(statusCode.BAD_REQUEST).json({ mesage: 'Email exists' });
+      }
+      presentation.collaborators.push(user._id);
+      await presentation.save();
+      const userDTO = {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+      };
+      return res.status(statusCode.OK).json({ user: userDTO });
+    } catch (err) {
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: err.message });
+    }
+  },
+  async deleteCollaborator(req, res) {
+    try {
+      const { presentationId, collaboratorId } = req.body;
+
+      const presentation = await PresentationService.findPresentationAndCollaborators(presentationId);
+      if (!presentation) {
+        return res.status(statusCode.NOT_FOUND).json({ message: 'Not found' });
+      }
+      const findCollaborator = presentation.collaborators
+        .find(collaborator => collaboratorId === collaborator._id.toString());
+      if (!findCollaborator) {
+        return res.status(statusCode.BAD_REQUEST).json({ mesage: 'Collaborator does not exist' });
+      }
+      presentation.collaborators = presentation.collaborators
+        .filter(collaborator => findCollaborator._id !== collaborator._id);
+      await presentation.save();
+      const updatedPresentation = await PresentationService.getCollaborators(presentationId);
+      const collaborators = updatedPresentation.collaborators.map(collaborator => {
+        const { _id, ...information } = collaborator;
+        return {
+          id: _id,
+          ...information,
+        };
+      });
+      return res.status(statusCode.OK).json({ collaborators });
+    } catch (err) {
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: err.message });
     }
   },
 };

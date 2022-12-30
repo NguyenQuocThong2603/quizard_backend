@@ -151,7 +151,7 @@ const GroupController = {
         return res.status(statusCode.NOT_FOUND).json({ message: 'Group not found' });
       }
 
-      kickedUser.joinedGroups = _.filter(kickedUser.joinedGroups, g => !g.equals(group._id));
+      kickedUser.joinedGroups = _.filter(kickedUser.joinedGroups, g => !g.equals(group.id));
       await kickedUser.save();
 
       const users = await UserService.findAllUsersInGroup(group._id);
