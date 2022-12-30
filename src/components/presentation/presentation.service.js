@@ -9,13 +9,6 @@ const PresentationService = {
     return presentation;
   },
 
-  async findPresentationById(presentationId) {
-    const presentation = Presentation.findOne({
-      presentationId,
-    });
-    return presentation;
-  },
-
   async list(groupId) {
     const transform = (doc, id) => ((doc == null) ? 'Unknown' : doc.name);
     const presentations = Presentation.find({ groupId })
@@ -23,12 +16,11 @@ const PresentationService = {
     return presentations;
   },
 
-  async create(name, owner, group) {
+  async create(name, owner) {
     const time = new Date();
     const newPresentation = Presentation({
       name,
       owner,
-      group,
       created: time,
       modified: time,
     });
@@ -43,6 +35,15 @@ const PresentationService = {
   async delete(_id) {
     return Presentation.deleteOne({ _id });
   },
+
+  async updateCurrentSession(_id, currentSession) {
+    return Presentation.updateOne({_id}, {currentSession});
+  },
+
+  async updateCurrentSlideIndex(_id, currentSlideIndex) {
+    return Presentation.updateOne({_id}, {currentSlideIndex});
+  }
+  
 };
 
 export default PresentationService;

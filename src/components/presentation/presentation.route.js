@@ -27,12 +27,17 @@ presentationRouter.post('/live', (req, res) => {
   PresentationController.live(req, res);
 });
 
+presentationRouter.get('/current-session/:presentationId', (req, res) => {
+  PresentationController.getCurrentSession(req, res);
+});
+
 presentationRouter.post('/join', (req, res) => {
   PresentationController.join(req, res);
 });
 
-presentationRouter.post('/choose', (req, res) => {
-  PresentationController.choose(req, res);
+presentationRouter.post('/vote', (req, res) => {
+  PresentationController.vote(req, res);
 });
+
 
 export default presentationRouter;

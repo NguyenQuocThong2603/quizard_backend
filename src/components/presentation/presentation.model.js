@@ -1,15 +1,32 @@
 import mongoose from 'mongoose';
+import slideTypes from '../../constants/slideTypes.js';
 
 const { Schema } = mongoose;
 
 const PresentationSchema = new Schema({
   name: { type: String, required: true },
   owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  group: { type: String, required: true },
-  slides: { type: [{question: String, options: [{text: String, vote: Number}]}], default: [{ question: '', options: [{ text: '', vote: 0 }] }] },
+  slides: { 
+    type: [Object
+    //   {
+    //   type: String,
+    //   question: String, 
+    //   options: [String],
+    //   header: String,
+    //   content: String
+    // }
+  ], 
+    default: [{ 
+      type: slideTypes.multipleChoice,
+      question: '', 
+      options: ["New option"],
+      header: "",
+      content: ""
+    }] 
+  },
   modified: { type: Date, require: true },
   created: { type: Date, required: true },
-  isLive: { type: Boolean, default: false },
+  currentSession: { type: Schema.Types.ObjectId, ref: "Session", default: null },
   currentSlideIndex: { type: Number, default: 0 },
 });
 
