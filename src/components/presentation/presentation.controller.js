@@ -4,6 +4,8 @@ import PresentationService from './presentation.service.js';
 import UserService from '../user/user.service.js';
 import SessionService from '../session/session.service.js';
 import slideTypes from '../../constants/slideTypes.js';
+import io from '../socket/server.js';
+import socketEvents from '../../constants/socketEvents.js';
 
 const PresentationController = {
 
@@ -149,6 +151,19 @@ const PresentationController = {
       const slideIndex = presentation.currentSlideIndex;
       const slides = presentation.slides;
       return res.status(statusCode.OK).json({ slides, slideIndex });
+
+    } catch (error) {
+      console.log(error);
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
+  },
+
+  async updateSlideIndex(req, res) {
+    try {
+      const { id, slideIndex } = req.body;
+      await PresentationService.updateCurrentSlideIndex(id, slideIndex);
+      io.in(id).emit(socketEvents.slideChange, slideIndex);
+      return res.status(statusCode.OK).send();
 
     } catch (error) {
       console.log(error);

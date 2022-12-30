@@ -39,6 +39,10 @@ presentationRouter.post('/live', (req, res) => {
   PresentationController.live(req, res);
 });
 
+presentationRouter.post('/updateSlideIndex', (req, res) => {
+  PresentationController.updateSlideIndex(req, res);
+});
+
 presentationRouter.get('/current-session/:presentationId', (req, res) => {
   PresentationController.getCurrentSession(req, res);
 });
