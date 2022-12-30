@@ -92,16 +92,18 @@ const PresentationController = {
 
   async live(req, res) {
     try {
-
-      const { _id } = req.user;
       const { presentation, groupId } = req.body;
+      if (presentation.currentSession != null) return res.status(statusCode.OK).send();
+
+      
+      // hosts array (host: can control presentation)
+      const { _id } = req.user;
       let hosts;
       if (groupId) {
-        // create with co-hosts
+        // TODO: create with co-hosts
       }
-      else {
-        hosts = [_id];
-      }
+      else hosts = [_id];
+
       // filter multiple choice slides
       let results = presentation.slides.filter(slide => slide.type == slideTypes.multipleChoice);
 
@@ -161,7 +163,6 @@ const PresentationController = {
       const { id, slideIndex, optionIndex } = req.body;
       const presentation = await PresentationService.find(id);
       const session = await SessionService.find(presentation.currentSession);
-      console.log(session);
       const resultIndex = session.slideToResultMap[`${slideIndex}`];
 
       // push vote
@@ -170,10 +171,25 @@ const PresentationController = {
       await session.save();
 
       // respond current chart: [ {text: string, voteCount: int} ]
-      const chart = session.results[resultIndex].options.map(option => ({
-        text: option.text,
-        voteCount: option.votes.length
-      }))
+      const chart = await SessionService.getChartData(session, resultIndex);
+
+      return res.status(statusCode.OK).json({ chart });
+    } catch (error) {
+      console.log(error);
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
+  },
+
+  async getChartData(req, res) {
+    try {
+      // get info
+      const { sessionId, slideIndex } = req.query;
+      const session = await SessionService.find(sessionId);
+      const resultIndex = session.slideToResultMap[`${slideIndex}`];
+
+      // respond current chart: [ {text: string, voteCount: int} ]
+      const chart = await SessionService.getChartData(session, resultIndex);
+      
       return res.status(statusCode.OK).json({ chart });
     } catch (error) {
       console.log(error);

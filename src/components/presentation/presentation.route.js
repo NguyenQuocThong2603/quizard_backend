@@ -15,6 +15,10 @@ presentationRouter.get('/collaborators', (req, res) => {
   PresentationController.getCollaborators(req, res);
 });
 
+presentationRouter.get('/chart', (req, res) => {
+  PresentationController.getChartData(req, res);
+});
+
 presentationRouter.get('/:presentationId', (req, res) => {
   PresentationController.getDetail(req, res);
 });
