@@ -2,10 +2,14 @@ import { nanoid } from 'nanoid';
 import moment from 'moment';
 import Session from './session.model.js';
 
-const SessionService = {
+const SessionService = {  
 
   async list(currentUser) {
     return Session.find({ hosts: currentUser });
+  },
+
+  async find(id) {
+    return Session.findOne({ _id: id });
   },
 
   async create(hosts, results, slideToResultMap) {

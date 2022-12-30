@@ -111,13 +111,12 @@ const PresentationController = {
         const slideIndex = presentation.slides.indexOf(result);
         slideToResultMap[slideIndex] = resultIndex;
       });
-      console.log(slideToResultMap);
 
       // convert from slide to result
       results = results.map(result => ({
         question: result.question,
         options: result.options.map(option => ({
-          text: option.text,
+          text: option,
           votes: []
         }))
       }));
@@ -162,7 +161,8 @@ const PresentationController = {
       const { id, slideIndex, optionIndex } = req.body;
       const presentation = await PresentationService.find(id);
       const session = await SessionService.find(presentation.currentSession);
-      const resultIndex = session.slideToResultMap[slideIndex];
+      console.log(session);
+      const resultIndex = session.slideToResultMap[`${slideIndex}`];
 
       // push vote
       const newVote = { user: userId, date: new Date() }
@@ -171,11 +171,12 @@ const PresentationController = {
 
       // respond current chart: [ {text: string, voteCount: int} ]
       const chart = session.results[resultIndex].options.map(option => ({
-        text,
+        text: option.text,
         voteCount: option.votes.length
       }))
       return res.status(statusCode.OK).json({ chart });
     } catch (error) {
+      console.log(error);
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
   },
