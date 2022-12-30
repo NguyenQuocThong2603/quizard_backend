@@ -1,5 +1,5 @@
 export default {
-    multipleChoice: "multiple-choice",
-    heading: "heading",
-    paragraph: "paragraph"
+    multipleChoice: "Multiplechoice",
+    heading: "Heading",
+    paragraph: "Paragraph"
 }

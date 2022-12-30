@@ -34,13 +34,11 @@ const SessionSchema = new Schema({
       }]
     }],
     require: true
+  },
+  slideToResultMap: {
+    type: Object,
+    required: true
   }
-  // url: { type: String, required: true, unique: true },
-  // expireDate: { type: Date, required: true },
-  // group: { type: Schema.Types.ObjectId },
-  // fromUser: { type: Schema.Types.ObjectId },
-  // toEmail: { type: String },
-  // status: { type: String, enum: ['Valid', 'Invalid'], default: 'Valid' },
 });
 
 const Session = mongoose.model('Session', SessionSchema);

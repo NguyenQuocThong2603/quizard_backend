@@ -3,6 +3,7 @@ import statusCode from '../../constants/statusCode.js';
 import PresentationService from './presentation.service.js';
 import UserService from '../user/user.service.js';
 import SessionService from '../session/session.service.js';
+import slideTypes from '../../constants/slideTypes.js';
 
 const PresentationController = {
 
@@ -91,16 +92,28 @@ const PresentationController = {
 
   async live(req, res) {
     try {
+
       const { _id } = req.user;
       const { presentation, groupId } = req.body;
       let hosts;
       if (groupId) {
-        // TODO: create session with co-hosts in group
+        // create with co-hosts
       }
       else {
         hosts = [_id];
       }
+      // filter multiple choice slides
       let results = presentation.slides.filter(slide => slide.type == slideTypes.multipleChoice);
+
+      // slide index to result index map
+      const slideToResultMap = {};
+      results.forEach((result, resultIndex) => {
+        const slideIndex = presentation.slides.indexOf(result);
+        slideToResultMap[slideIndex] = resultIndex;
+      });
+      console.log(slideToResultMap);
+
+      // convert from slide to result
       results = results.map(result => ({
         question: result.question,
         options: result.options.map(option => ({
@@ -109,7 +122,7 @@ const PresentationController = {
         }))
       }));
 
-      const newSession = await SessionService.create(hosts, results);
+      const newSession = await SessionService.create(hosts, results, slideToResultMap);
       await PresentationService.updateCurrentSlideIndex(presentation.id, 0);
       await PresentationService.updateCurrentSession(presentation.id, newSession);
       return res.status(statusCode.OK).send();
@@ -166,7 +179,7 @@ const PresentationController = {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
   },
-  
+
   async getCollaborators(req, res) {
     try {
       const { presentationId } = req.query;

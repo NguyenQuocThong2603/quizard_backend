@@ -8,12 +8,13 @@ const SessionService = {
     return Session.find({ hosts: currentUser });
   },
 
-  async create(hosts, results) {
+  async create(hosts, results, slideToResultMap) {
     const date = new Date();
     const newSession = Session({
       hosts,
       date,
-      results
+      results,
+      slideToResultMap
     });
     return newSession.save();
   },
