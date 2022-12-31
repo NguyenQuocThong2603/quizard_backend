@@ -187,6 +187,7 @@ const PresentationController = {
 
       // respond current chart: [ {text: string, voteCount: int} ]
       const chart = await SessionService.getChartData(session, resultIndex);
+      io.in(id).emit(socketEvents.voteChange, slideIndex, optionIndex);
 
       return res.status(statusCode.OK).json({ chart });
     } catch (error) {
