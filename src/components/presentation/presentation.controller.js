@@ -161,6 +161,20 @@ const PresentationController = {
     }
   },
 
+  async end(req, res) {
+    try {
+      const { id } = req.body;
+      const presentation = await PresentationService.find(id);
+      presentation.currentSession = null;
+      presentation.save();
+      return res.status(statusCode.OK).send();
+
+    } catch (error) {
+      console.log(error);
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
+  },
+
   async updateSlideIndex(req, res) {
     try {
       const { id, slideIndex } = req.body;

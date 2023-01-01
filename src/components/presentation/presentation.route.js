@@ -51,6 +51,10 @@ presentationRouter.post('/join', (req, res) => {
   PresentationController.join(req, res);
 });
 
+presentationRouter.post('/end', (req, res) => {
+  PresentationController.end(req, res);
+});
+
 presentationRouter.post('/vote', (req, res) => {
   PresentationController.vote(req, res);
 });
