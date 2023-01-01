@@ -6,6 +6,11 @@ const SessionService = {
     return Session.find({ hosts: currentUser });
   },
 
+  async checkIsHost(userId, sessionId) {
+    const count = await Session.countDocuments({_id: sessionId, hosts: userId});
+    return count == 1;
+  },
+
   async find(id) {
     return Session.findOne({ _id: id });
   },

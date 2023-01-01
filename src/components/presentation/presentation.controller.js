@@ -148,12 +148,13 @@ const PresentationController = {
 
   async join(req, res) {
     try {
+      const {_id: userId} = req.user;
       const { id } = req.body;
       // TODO: check for user in the group
       const presentation = await PresentationService.find(id);
-      const slideIndex = presentation.currentSlideIndex;
-      const slides = presentation.slides;
-      return res.status(statusCode.OK).json({ slides, slideIndex });
+      const isHost = await SessionService.checkIsHost(userId, presentation.currentSession);
+
+      return res.status(statusCode.OK).json({ presentation, isHost });
 
     } catch (error) {
       console.log(error);
