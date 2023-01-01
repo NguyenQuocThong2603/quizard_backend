@@ -11,7 +11,7 @@ const PresentationSchema = new Schema({
       {
         type: { type: String, enum: ['Multiplechoice', 'Heading', 'Paragraph'] },
         question: String,
-        options: [String],
+        options: { type: Array },
         header: String,
         content: String,
       },
@@ -19,12 +19,15 @@ const PresentationSchema = new Schema({
     default: [{
       type: 'Multiplechoice',
       question: '',
-      options: ['New option'],
+      options: [''],
+      hearder: '',
+      content: '',
     }],
   },
   modified: { type: Date, require: true },
   created: { type: Date, required: true },
   isLive: { type: Boolean, default: false },
+  currentSession: { type: Schema.Types.ObjectId, ref: 'Session', default: null },
   currentSlideIndex: { type: Number, default: 0 },
 });
 

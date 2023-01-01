@@ -80,6 +80,9 @@ const PresentationController = {
       presentationInDB.question = presentation.question;
       presentationInDB.name = presentation.name;
       presentationInDB.slides = presentation.slides;
+      presentationInDB.type = presentation.type;
+      presentationInDB.header = presentation.header;
+      presentationInDB.content = presentation.content;
       presentationInDB.modified = Date.now();
       await presentationInDB.save();
       return res.status(statusCode.OK).json({ presentation });
