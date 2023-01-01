@@ -15,6 +15,14 @@ presentationRouter.get('/collaborators', (req, res) => {
   PresentationController.getCollaborators(req, res);
 });
 
+presentationRouter.get('/chart', (req, res) => {
+  PresentationController.getChartData(req, res);
+});
+
+presentationRouter.get('/latestChart', (req, res) => {
+  PresentationController.getLatestChartData(req, res);
+});
+
 presentationRouter.get('/:presentationId', (req, res) => {
   PresentationController.getDetail(req, res);
 });
@@ -31,12 +39,20 @@ presentationRouter.post('/live', (req, res) => {
   PresentationController.live(req, res);
 });
 
+presentationRouter.post('/updateSlideIndex', (req, res) => {
+  PresentationController.updateSlideIndex(req, res);
+});
+
+presentationRouter.get('/current-session/:presentationId', (req, res) => {
+  PresentationController.getCurrentSession(req, res);
+});
+
 presentationRouter.post('/join', (req, res) => {
   PresentationController.join(req, res);
 });
 
-presentationRouter.post('/choose', (req, res) => {
-  PresentationController.choose(req, res);
+presentationRouter.post('/vote', (req, res) => {
+  PresentationController.vote(req, res);
 });
 
 presentationRouter.post('/addCollaborator', (req, res) => {

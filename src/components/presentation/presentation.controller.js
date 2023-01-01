@@ -2,6 +2,10 @@ import _ from 'lodash';
 import statusCode from '../../constants/statusCode.js';
 import PresentationService from './presentation.service.js';
 import UserService from '../user/user.service.js';
+import SessionService from '../session/session.service.js';
+import slideTypes from '../../constants/slideTypes.js';
+import io from '../socket/server.js';
+import socketEvents from '../../constants/socketEvents.js';
 
 const PresentationController = {
 
@@ -87,47 +91,145 @@ const PresentationController = {
       await presentationInDB.save();
       return res.status(statusCode.OK).json({ presentation });
     } catch (err) {
-      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: er.mesage });
     }
   },
 
   async live(req, res) {
-    const { id } = req.body;
     try {
-      const presentation = await PresentationService.find(id);
-      presentation.isLive = true;
-      await presentation.save();
-      return res.status(statusCode.OK).json({ presentation });
+      const { presentation, groupId } = req.body;
+      if (presentation.currentSession != null) return res.status(statusCode.OK).send();
+
+      
+      // hosts array (host: can control presentation)
+      const { _id } = req.user;
+      let hosts;
+      if (groupId) {
+        // TODO: create with co-hosts
+      }
+      else hosts = [_id];
+
+      // filter multiple choice slides
+      let results = presentation.slides.filter(slide => slide.type == slideTypes.multipleChoice);
+
+      // slide index to result index map
+      const slideToResultMap = {};
+      results.forEach((result, resultIndex) => {
+        const slideIndex = presentation.slides.indexOf(result);
+        slideToResultMap[slideIndex] = resultIndex;
+      });
+
+      // convert from slide to result
+      results = results.map(result => ({
+        question: result.question,
+        options: result.options.map(option => ({
+          text: option,
+          votes: []
+        }))
+      }));
+
+      const newSession = await SessionService.create(hosts, presentation.id, results, slideToResultMap);
+      await PresentationService.updateCurrentSlideIndex(presentation.id, 0);
+      await PresentationService.updateCurrentSession(presentation.id, newSession);
+      return res.status(statusCode.OK).send();
+
     } catch (error) {
       console.log(error);
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
+  },
+
+  async getCurrentSession(req, res) {
+    const { presentationId } = req.params;
+    const presentation = await PresentationService.find(presentationId).populate("currentSession");
+    const session = presentation.currentSession;
+    return res.status(statusCode.OK).json({ session });
   },
 
   async join(req, res) {
-    const { id } = req.body;
-    // TODO: check for user in the group
     try {
+      const { id } = req.body;
+      // TODO: check for user in the group
       const presentation = await PresentationService.find(id);
       const slideIndex = presentation.currentSlideIndex;
-      const slide = presentation.slides[slideIndex];
-      return res.status(statusCode.OK).json({ slide, slideIndex });
+      const slides = presentation.slides;
+      return res.status(statusCode.OK).json({ slides, slideIndex });
+
     } catch (error) {
       console.log(error);
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
   },
 
-  async choose(req, res) {
-    const { id, slideIndex, optionIndex } = req.body;
-    // TODO: check for user in the group
+  async updateSlideIndex(req, res) {
     try {
-      const presentation = await PresentationService.find(id);
-      presentation.slides[slideIndex].options[optionIndex].vote += 1;
-      await presentation.save();
-      const slide = presentation.slides[slideIndex];
-      return res.status(statusCode.OK).json({ slide });
+      const { id, slideIndex } = req.body;
+      await PresentationService.updateCurrentSlideIndex(id, slideIndex);
+      io.in(id).emit(socketEvents.slideChange, slideIndex);
+      return res.status(statusCode.OK).send();
+
     } catch (error) {
+      console.log(error);
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
+  },
+
+  async vote(req, res) {
+    try {
+      // get info
+      const { _id: userId } = req.user;
+      const { id, slideIndex, optionIndex } = req.body;
+      const presentation = await PresentationService.find(id);
+      const session = await SessionService.find(presentation.currentSession);
+      const resultIndex = session.slideToResultMap[`${slideIndex}`];
+
+      // push vote
+      const newVote = { user: userId, date: new Date() }
+      session.results[resultIndex].options[optionIndex].votes.push(newVote);
+      await session.save();
+
+      // respond current chart: [ {text: string, voteCount: int} ]
+      const chart = await SessionService.getChartData(session, resultIndex);
+      io.in(id).emit(socketEvents.voteChange, slideIndex, optionIndex);
+
+      return res.status(statusCode.OK).json({ chart });
+    } catch (error) {
+      console.log(error);
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
+  },
+
+  async getChartData(req, res) {
+    try {
+      // get info
+      const { sessionId, slideIndex } = req.query;
+      const session = await SessionService.find(sessionId);
+      const resultIndex = session.slideToResultMap[`${slideIndex}`];
+
+      // respond current chart: [ {text: string, voteCount: int} ]
+      const chart = await SessionService.getChartData(session, resultIndex);
+      
+      return res.status(statusCode.OK).json({ chart });
+    } catch (error) {
+      console.log(error);
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    }
+  },
+
+  async getLatestChartData(req, res) {
+    try {
+      // get info
+      const { id, slideIndex } = req.query;
+      const session = await SessionService.findLatestForPresentation(id);
+      if (!session) return res.status(statusCode.OK).json({ chart: null });
+
+      const resultIndex = session.slideToResultMap[`${slideIndex}`];
+      // respond current chart: [ {text: string, voteCount: int} ]
+      const chart = await SessionService.getChartData(session, resultIndex);
+      
+      return res.status(statusCode.OK).json({ chart });
+    } catch (error) {
+      console.log(error);
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
   },

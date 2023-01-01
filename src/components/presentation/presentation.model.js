@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import slideTypes from '../../constants/slideTypes.js';
 
 const { Schema } = mongoose;
 
@@ -26,7 +27,6 @@ const PresentationSchema = new Schema({
   },
   modified: { type: Date, require: true },
   created: { type: Date, required: true },
-  isLive: { type: Boolean, default: false },
   currentSession: { type: Schema.Types.ObjectId, ref: 'Session', default: null },
   currentSlideIndex: { type: Number, default: 0 },
 });
