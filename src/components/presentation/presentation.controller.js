@@ -139,8 +139,9 @@ const PresentationController = {
     try {
       const { email } = req.user;
       const { id } = req.body;
-      const presentation = await PresentationService.find(id).populate('currentSession');
-      const session = presentation.currentSession;
+      const presentation = await PresentationService.find(id);
+      const session = await SessionService.find(presentation.currentSession);
+      if (!session) return res.status(statusCode.NOT_FOUND).send();
 
       // check user is in the group
       if (session.groupId) {
@@ -164,6 +165,7 @@ const PresentationController = {
       const presentation = await PresentationService.find(id);
       presentation.currentSession = null;
       presentation.save();
+      io.in(id).emit(socketEvents.presentationEnd);
       return res.status(statusCode.OK).send();
     } catch (error) {
       console.log(error);

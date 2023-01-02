@@ -15,11 +15,7 @@ const GroupController = {
     let groups = [];
     switch (category) {
       case 'all':
-        const joinedGroups = await UserService.getJoinedGroups(user);
-        const ownedGroups = await UserService.getOwnedGroups(user);
-        const setMap = new Map();
-        for (const group of ownedGroups.concat(joinedGroups)) setMap.set(group.groupId, group);
-        groups = [...setMap.values()];
+        groups = await UserService.getJoinedGroups(user);
         break;
 
       case 'owned':
@@ -27,7 +23,12 @@ const GroupController = {
         break;
 
       case 'joined':
-        groups = await UserService.getJoinedGroups(user);
+        const joinedGroups = await UserService.getJoinedGroups(user);
+        const ownedGroups = await UserService.getOwnedGroups(user);
+        groups = joinedGroups.filter(x => !(x in ownedGroups));
+        // const setMap = new Map();
+        // for (const group of ownedGroups.concat(joinedGroups)) setMap.set(group.groupId, group);
+        // groups = [...setMap.values()];
         break;
     }
     return res.status(200).json({ groups });

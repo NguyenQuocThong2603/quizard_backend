@@ -38,8 +38,8 @@ const GroupService = {
     return group;
   },
 
-  async getSpecialMembers(groupId) {
-    const group = await Group.findOne({ groupId });    
+  async getSpecialMembers(_id) {
+    const group = await Group.findOne({ _id });    
     return [group.owner, ...group.roles];
   },
 };

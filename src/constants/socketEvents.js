@@ -1,5 +1,6 @@
 export default {
     joinPresentation: "joinPresentation",
     slideChange: "slideChange",
-    voteChange: "voteChange"
-}
+    voteChange: "voteChange",
+    presentationEnd: "presentationEnd"
+};

@@ -78,7 +78,7 @@ const UserService = {
   },
 
   async checkInGroup(email, groupId) {
-    const user = await User.findOne({ email, joinedGroup: groupId });
+    const user = await User.findOne({ email, joinedGroups: groupId });
     return user != null;
   }
 };
