@@ -18,7 +18,7 @@ const GroupController = {
         const joinedGroups = await UserService.getJoinedGroups(user);
         const ownedGroups = await UserService.getOwnedGroups(user);
         const setMap = new Map();
-        for (const group of ownedGroups.concat(joinedGroups)) setMap.set(group.groupId, group);
+        for (const group of ownedGroups.concat(joinedGroups)) setMap.set(group.id, group);
         groups = [...setMap.values()];
         break;
 
@@ -40,8 +40,7 @@ const GroupController = {
     // create group
     let group;
     try {
-      const groupId = nanoid(10);
-      group = await GroupService.create(groupId, name, description, owner);
+      group = await GroupService.create(name, description, owner);
 
       // add user to joined groups & owned groups
       const user = await UserService.findUser(owner);
@@ -78,7 +77,6 @@ const GroupController = {
 
       const groupDTO = {
         id: group.id,
-        groupId: group.groupId,
         name: group.name,
         description: group.description,
         joinedUser: users,
@@ -195,7 +193,7 @@ const GroupController = {
 
     user.joinedGroups.push(link.group);
     await user.save();
-    return res.status(statusCode.OK).json({ groupId: group.groupId });
+    return res.status(statusCode.OK).json({ groupId: group.id });
   },
 
   async deleteGroup(req, res) {

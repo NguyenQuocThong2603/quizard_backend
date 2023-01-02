@@ -11,7 +11,7 @@ const GroupService = {
 
   async findGroupById(groupId) {
     const group = Group.findOne({
-      groupId,
+      _id: groupId,
     });
     return group;
   },
@@ -21,9 +21,8 @@ const GroupService = {
     return groups;
   },
 
-  async create(groupId, name, description, owner) {
+  async create(name, description, owner) {
     const newGroup = Group({
-      groupId,
       name,
       description,
       owner,
@@ -33,7 +32,7 @@ const GroupService = {
 
   async findGroupByIdAndDelete(groupId, owner) {
     const group = Group.findOneAndDelete({
-      groupId, owner,
+      _id: groupId, owner,
     }, { returnDocument: 'after' });
     return group;
   },
