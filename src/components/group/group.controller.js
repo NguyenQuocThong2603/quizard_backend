@@ -63,7 +63,6 @@ const GroupController = {
         return res.status(statusCode.NOT_FOUND).json({ message: 'Group not found' });
       }
       let users = await UserService.findAllUsersInGroup(group.id);
-      console.log(users, group.owner);
 
       users = users.map(user => {
         const obj = user.toJSON();
@@ -74,6 +73,7 @@ const GroupController = {
         } else {
           obj.role = 'Member';
         }
+        return obj;
       });
 
       const groupDTO = {

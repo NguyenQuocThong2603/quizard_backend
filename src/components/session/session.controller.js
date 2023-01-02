@@ -103,8 +103,35 @@ const SessionController = {
     }
   },
 
-  async getChat(req, res) {
+  async addMessage(req, res) {
+    try {
+      const { sessionId, message } = req.body;
+      const { user } = req;
+      const session = await SessionService.find(sessionId);
+      if (!session) {
+        return res.status(statusCode.BAD_REQUEST).json({ message: 'Add message failed' });
+      }
+      const now = new Date();
+      session.chats.push({
+        user: user.id,
+        message,
+        date: now,
+      });
+      await session.save();
+      return res.status(statusCode.OK).json({ chats: session.chats });
+    } catch (err) {
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
+    }
+  },
 
+  async getChatMessage(req, res) {
+    try {
+      const { sessionId } = req.query;
+      const session = await SessionService.getChatOfSession(sessionId);
+      return res.status(statusCode.OK).json({ chats: session.chats });
+    } catch (err) {
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
+    }
   },
 };
 
