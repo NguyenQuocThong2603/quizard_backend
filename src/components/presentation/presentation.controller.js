@@ -92,14 +92,14 @@ const PresentationController = {
     try {
       const { presentation, groupId } = req.body;
       if (presentation.currentSession != null) return res.status(statusCode.OK).send();
-      
+
       // hosts array (host: can control presentation)
-      const { id } = req.user;
+      const { email } = req.user;
       let hosts;
       if (groupId) {
         // TODO: create with co-hosts
       }
-      else hosts = [id];
+      else hosts = [email];
 
       // filter multiple choice slides
       let results = presentation.slides.filter(slide => slide.type == slideTypes.multipleChoice);
@@ -140,11 +140,11 @@ const PresentationController = {
 
   async join(req, res) {
     try {
-      const {id: userId} = req.user;
+      const { email } = req.user;
       const { id } = req.body;
       // TODO: check for user in the group
       const presentation = await PresentationService.find(id);
-      const isHost = await SessionService.checkIsHost(userId, presentation.currentSession);
+      const isHost = await SessionService.checkIsHost(email, presentation.currentSession);
 
       return res.status(statusCode.OK).json({ presentation, isHost });
 
@@ -215,7 +215,7 @@ const PresentationController = {
 
       // respond current chart: [ {text: string, voteCount: int} ]
       const chart = await SessionService.getChartData(session, resultIndex);
-      
+
       return res.status(statusCode.OK).json({ chart });
     } catch (error) {
       console.log(error);
@@ -233,7 +233,7 @@ const PresentationController = {
       const resultIndex = session.slideToResultMap[`${slideIndex}`];
       // respond current chart: [ {text: string, voteCount: int} ]
       const chart = await SessionService.getChartData(session, resultIndex);
-      
+
       return res.status(statusCode.OK).json({ chart });
     } catch (error) {
       console.log(error);

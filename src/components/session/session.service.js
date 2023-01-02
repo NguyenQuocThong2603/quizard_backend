@@ -1,13 +1,13 @@
 import Session from './session.model.js';
 
-const SessionService = {  
+const SessionService = {
 
   async list(currentUser) {
     return Session.find({ hosts: currentUser });
   },
 
-  async checkIsHost(userId, sessionId) {
-    const count = await Session.countDocuments({_id: sessionId, hosts: userId});
+  async checkIsHost(email, sessionId) {
+    const count = await Session.countDocuments({ _id: sessionId, hosts: email });
     return count == 1;
   },
 
@@ -18,7 +18,7 @@ const SessionService = {
   async findLatestForPresentation(presentationId) {
     return Session.findOne({ presentationId });
   },
-  
+
   async create(hosts, presentationId, results, slideToResultMap) {
     const date = new Date();
     const newSession = Session({
