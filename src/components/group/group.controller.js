@@ -74,12 +74,7 @@ const GroupController = {
         } else {
           obj.role = 'Member';
         }
-<<<<<<< HEAD
       });
-=======
-        return obj;
-      })
->>>>>>> development
 
       const groupDTO = {
         id: group.id,

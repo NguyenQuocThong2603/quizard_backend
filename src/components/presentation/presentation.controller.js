@@ -98,12 +98,7 @@ const PresentationController = {
       let hosts;
       if (groupId) {
         // TODO: create with co-hosts
-<<<<<<< HEAD
-      } else hosts = [_id];
-=======
-      }
-      else hosts = [email];
->>>>>>> development
+      } else hosts = [email];
 
       // filter multiple choice slides
       let results = presentation.slides.filter(slide => slide.type == slideTypes.multipleChoice);
@@ -147,15 +142,9 @@ const PresentationController = {
       const { id } = req.body;
       // TODO: check for user in the group
       const presentation = await PresentationService.find(id);
-<<<<<<< HEAD
-      const slideIndex = presentation.currentSlideIndex;
-      const { slides } = presentation;
-      return res.status(statusCode.OK).json({ slides, slideIndex });
-=======
       const isHost = await SessionService.checkIsHost(email, presentation.currentSession);
 
       return res.status(statusCode.OK).json({ presentation, isHost });
-
     } catch (error) {
       console.log(error);
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
@@ -169,8 +158,6 @@ const PresentationController = {
       presentation.currentSession = null;
       presentation.save();
       return res.status(statusCode.OK).send();
-
->>>>>>> development
     } catch (error) {
       console.log(error);
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
