@@ -12,29 +12,22 @@ const PresentationController = {
   async getPresentations(req, res) {
     try {
       const { user } = req;
+      console.log(user);
       const { category } = req.query;
       let presentations;
       if (category === 'owned') {
-        presentations = await PresentationService.getOwnedPresentations(user._id);
+        presentations = await PresentationService.getOwnedPresentations(user.id);
       } else {
-        presentations = await PresentationService.getCollaboratePresentations(user._id);
+        presentations = await PresentationService.getCollaboratePresentations(user.id);
       }
-      const presentationDTO = [];
-      presentations.forEach(presentation => {
-        const { _id, ...informOfPresentation } = presentation;
-        presentationDTO.push({
-          id: _id,
-          ...informOfPresentation,
-        });
-      });
-      return res.status(statusCode.OK).json({ presentations: presentationDTO });
+      return res.status(statusCode.OK).json({ presentations });
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: err.message });
     }
   },
 
   async create(req, res) {
-    const { _id: owner } = req.user;
+    const { id: owner } = req.user;
 
     // count number of name-unedited presentations
     const defaultName = 'New presentation';
@@ -45,10 +38,10 @@ const PresentationController = {
     let presentation;
     try {
       presentation = await PresentationService.create(name, owner);
+      return res.status(statusCode.CREATED).json({ presentation });
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: err.message });
     }
-    return res.status(statusCode.CREATED).json({ presentation });
   },
 
   async delete(req, res) {
@@ -99,15 +92,14 @@ const PresentationController = {
     try {
       const { presentation, groupId } = req.body;
       if (presentation.currentSession != null) return res.status(statusCode.OK).send();
-
       
       // hosts array (host: can control presentation)
-      const { _id } = req.user;
+      const { id } = req.user;
       let hosts;
       if (groupId) {
         // TODO: create with co-hosts
       }
-      else hosts = [_id];
+      else hosts = [id];
 
       // filter multiple choice slides
       let results = presentation.slides.filter(slide => slide.type == slideTypes.multipleChoice);
@@ -148,7 +140,7 @@ const PresentationController = {
 
   async join(req, res) {
     try {
-      const {_id: userId} = req.user;
+      const {id: userId} = req.user;
       const { id } = req.body;
       // TODO: check for user in the group
       const presentation = await PresentationService.find(id);
@@ -192,7 +184,7 @@ const PresentationController = {
   async vote(req, res) {
     try {
       // get info
-      const { _id: userId } = req.user;
+      const { id: userId } = req.user;
       const { id, slideIndex, optionIndex } = req.body;
       const presentation = await PresentationService.find(id);
       const session = await SessionService.find(presentation.currentSession);
@@ -282,21 +274,16 @@ const PresentationController = {
         return res.status(statusCode.NOT_FOUND).json({ message: 'User not found' });
       }
 
-      if (user._id.toString() === presentation.owner.toString()) {
+      if (user.id.toString() === presentation.owner.toString()) {
         return res.status(statusCode.CONFLICT);
       }
 
-      if (presentation.collaborators.some(collaborator => collaborator._id.toString() === user._id.toString())) {
+      if (presentation.collaborators.some(collaborator => collaborator.id.toString() === user.id.toString())) {
         return res.status(statusCode.BAD_REQUEST).json({ mesage: 'Email exists' });
       }
-      presentation.collaborators.push(user._id);
+      presentation.collaborators.push(user.id);
       await presentation.save();
-      const userDTO = {
-        id: user._id,
-        email: user.email,
-        name: user.name,
-      };
-      return res.status(statusCode.OK).json({ user: userDTO });
+      return res.status(statusCode.OK).json({ user });
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: err.message });
     }
@@ -310,12 +297,12 @@ const PresentationController = {
         return res.status(statusCode.NOT_FOUND).json({ message: 'Not found' });
       }
       const findCollaborator = presentation.collaborators
-        .find(collaborator => collaboratorId === collaborator._id.toString());
+        .find(collaborator => collaboratorId === collaborator.id.toString());
       if (!findCollaborator) {
         return res.status(statusCode.BAD_REQUEST).json({ mesage: 'Collaborator does not exist' });
       }
       presentation.collaborators = presentation.collaborators
-        .filter(collaborator => findCollaborator._id !== collaborator._id);
+        .filter(collaborator => findCollaborator.id !== collaborator.id);
       await presentation.save();
       const updatedPresentation = await PresentationService.getCollaborators(presentationId);
       const collaborators = updatedPresentation.collaborators.map(collaborator => {

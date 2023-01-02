@@ -24,18 +24,18 @@ const PresentationService = {
   },
 
   async getOwnedPresentations(ownerId) {
-    const presentations = Presentation.find({ owner: ownerId }).populate('owner').lean();
+    const presentations = Presentation.find({ owner: ownerId }).populate('owner');
     return presentations;
   },
 
   async getCollaboratePresentations(collaboratorId) {
-    const presentations = Presentation.find({ collaborators: collaboratorId }).populate('owner').lean();
+    const presentations = Presentation.find({ collaborators: collaboratorId }).populate('owner');
     return presentations;
   },
 
   async getCollaborators(presentationId) {
-    const collaborators = Presentation.findOne({ _id: presentationId })
-      .populate('collaborators', ['_id', 'name', 'email']).lean();
+    const collaborators = Presentation.findOne({ id: presentationId })
+      .populate('collaborators', ['_id', 'name', 'email']);
     return collaborators;
   },
 
@@ -56,7 +56,7 @@ const PresentationService = {
   },
 
   async delete(_id) {
-    return Presentation.deleteOne({ _id });
+    return Presentation.deleteOne({ id });
   },
 
   async updateCurrentSession(_id, currentSession) {

@@ -30,7 +30,7 @@ passport.use(new LocalStrategy({ usernameField: 'email', sessionStorage: false, 
     }
 
     const userDTO = {
-      _id: user._id,
+      id: user.id,
       email: user.email,
       name: user.name,
       gender: user.gender,
@@ -65,7 +65,7 @@ passport.use(new GoogleStrategy(
       });
       await newUser.save();
       const userDTO = {
-        _id: user._id,
+        id: user.id,
         email: user.email,
         name: user.name,
         gender: user.gender,

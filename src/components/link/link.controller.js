@@ -4,7 +4,7 @@ import LinkService from './link.service.js';
 
 const LinkController = {
   async createLink(req, res) {
-    const { _id: fromUser } = req.user;
+    const { id: fromUser } = req.user;
     const { groupId } = req.body;
     const { _id: group } = await GroupService.findGroupById(groupId);
     const link = await LinkService.createLink(group, fromUser);
@@ -18,7 +18,7 @@ const LinkController = {
   },
 
   async getLink(req, res) {
-    const { _id: fromUser } = req.user;
+    const { id: fromUser } = req.user;
     const { groupId } = req.body;
     console.log(req.body);
     const { _id: group } = await GroupService.findGroupById(groupId);

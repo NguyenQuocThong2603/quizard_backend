@@ -13,7 +13,7 @@ const SessionController = {
   },
 
   // async create(req, res) {
-  //   const { _id } = req.user;
+  //   const { id } = req.user;
   //   const { presentation, groupId } = req.body;
   //   let hosts;
   //   if (groupId) {
@@ -47,7 +47,7 @@ const SessionController = {
   // },
 
   async getSession(req, res) {
-    const { _id: fromUser } = req.user;
+    const { id: fromUser } = req.user;
     const { groupId } = req.body;
     console.log(req.body);
     const { _id: group } = await GroupService.findGroupById(groupId);

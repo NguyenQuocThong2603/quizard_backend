@@ -31,13 +31,13 @@ const PresentationSchema = new Schema({
   currentSlideIndex: { type: Number, default: 0 },
 });
 
-PresentationSchema.set('toJSON', {
-  transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString();
-    delete returnedObject._id;
-    delete returnedObject.__v;
-  },
-});
+// PresentationSchema.set('toJSON', {
+//   transform: (document, returnedObject) => {
+//     returnedObject.id = returnedObject.id.toString();
+//     delete returnedObject.id;
+//     delete returnedObject.__v;
+//   },
+// });
 
 const Presentation = mongoose.model('Presentation', PresentationSchema);
 
