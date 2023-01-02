@@ -19,11 +19,12 @@ const SessionService = {
     return Session.findOne({ presentationId });
   },
 
-  async create(hosts, presentationId, results, slideToResultMap) {
+  async create(hosts, presentationId, groupId, results, slideToResultMap) {
     const date = new Date();
     const newSession = Session({
       hosts,
       presentationId,
+      groupId,
       date,
       results,
       slideToResultMap,

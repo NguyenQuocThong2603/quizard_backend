@@ -76,6 +76,11 @@ const UserService = {
       email,
     }, { password });
   },
+
+  async checkInGroup(email, groupId) {
+    const user = await User.findOne({ email, joinedGroup: groupId });
+    return user != null;
+  }
 };
 
 export default UserService;

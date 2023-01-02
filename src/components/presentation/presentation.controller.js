@@ -118,7 +118,7 @@ const PresentationController = {
         })),
       }));
 
-      const newSession = await SessionService.create(hosts, presentation.id, results, slideToResultMap);
+      const newSession = await SessionService.create(hosts, presentation.id, groupId, results, slideToResultMap);
       await PresentationService.updateCurrentSlideIndex(presentation.id, 0);
       await PresentationService.updateCurrentSession(presentation.id, newSession);
       return res.status(statusCode.OK).send();
@@ -139,8 +139,16 @@ const PresentationController = {
     try {
       const { email } = req.user;
       const { id } = req.body;
-      // TODO: check for user in the group
-      const presentation = await PresentationService.find(id);
+      const presentation = await PresentationService.find(id).populate('currentSession');
+      const session = presentation.currentSession;
+
+      // check user is in the group
+      if (session.groupId) {
+        const isInGroup = await UserService.checkInGroup(email, session.groupId);
+        if (!isInGroup) return res.status(statusCode.FORBIDDEN).send();
+      }
+
+      // check user is one of the hosts
       const isHost = await SessionService.checkIsHost(email, presentation.currentSession);
 
       return res.status(statusCode.OK).json({ presentation, isHost });
