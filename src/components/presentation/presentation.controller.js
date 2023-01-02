@@ -12,7 +12,6 @@ const PresentationController = {
   async getPresentations(req, res) {
     try {
       const { user } = req;
-      console.log(user);
       const { category } = req.query;
       let presentations;
       if (category === 'owned') {
@@ -243,18 +242,7 @@ const PresentationController = {
       if (!presentation) {
         return res.status(statusCode.NOT_FOUND).json({ message: 'Not found' });
       }
-      const collaborators = presentation.collaborators.map(collaborator => {
-        const { _id, ...information } = collaborator;
-        return {
-          id: _id,
-          ...information,
-        };
-      });
-      const presentationDTO = {
-        name: presentation.name,
-        collaborators,
-      };
-      return res.status(statusCode.OK).json({ presentation: presentationDTO });
+      return res.status(statusCode.OK).json({ presentation });
     } catch (error) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
@@ -304,14 +292,7 @@ const PresentationController = {
         .filter(collaborator => findCollaborator.id !== collaborator.id);
       await presentation.save();
       const updatedPresentation = await PresentationService.getCollaborators(presentationId);
-      const collaborators = updatedPresentation.collaborators.map(collaborator => {
-        const { _id, ...information } = collaborator;
-        return {
-          id: _id,
-          ...information,
-        };
-      });
-      return res.status(statusCode.OK).json({ collaborators });
+      return res.status(statusCode.OK).json({ collaborators: updatedPresentation.collaborators });
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: err.message });
     }
