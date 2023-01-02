@@ -74,8 +74,7 @@ const GroupController = {
         } else {
           obj.role = 'Member';
         }
-        return obj;
-      })
+      });
 
       const groupDTO = {
         id: group.id,

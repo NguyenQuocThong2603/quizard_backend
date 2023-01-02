@@ -4,24 +4,24 @@ const { Schema } = mongoose;
 
 const SessionSchema = new Schema({
   hosts: { type: [String], required: true },
-  presentationId: { type: Schema.Types.ObjectId, required: true },
+  presentationId: { type: Schema.Types.ObjectId, ref: 'Presentation', required: true },
   date: { type: Date, required: true },
   chats: {
     type: [{
-      user: Schema.Types.ObjectId,
+      user: { type: Schema.Types.ObjectId, ref: 'User' },
       message: String,
-      date: Date
+      date: Date,
     }],
-    default: []
+    default: [],
   },
   questions: {
     type: [{
       question: String,
       vote: Number,
       answered: Boolean,
-      date: Date
+      date: Date,
     }],
-    default: []
+    default: [],
   },
   results: {
     type: [{
@@ -29,17 +29,17 @@ const SessionSchema = new Schema({
       options: [{
         text: String,
         votes: [{
-          user: { type: Schema.Types.ObjectId, ref: "User" },
-          date: Date
-        }]
-      }]
+          user: { type: Schema.Types.ObjectId, ref: 'User' },
+          date: Date,
+        }],
+      }],
     }],
-    require: true
+    require: true,
   },
   slideToResultMap: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 });
 
 const Session = mongoose.model('Session', SessionSchema);

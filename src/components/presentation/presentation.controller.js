@@ -13,7 +13,6 @@ const PresentationController = {
   async getPresentations(req, res) {
     try {
       const { user } = req;
-      console.log(user);
       const { category } = req.query;
       let presentations;
       if (category === 'owned') {
@@ -115,15 +114,14 @@ const PresentationController = {
         question: result.question,
         options: result.options.map(option => ({
           text: option,
-          votes: []
-        }))
+          votes: [],
+        })),
       }));
 
       const newSession = await SessionService.create(hosts, presentation.id, results, slideToResultMap);
       await PresentationService.updateCurrentSlideIndex(presentation.id, 0);
       await PresentationService.updateCurrentSession(presentation.id, newSession);
       return res.status(statusCode.OK).send();
-
     } catch (error) {
       console.log(error);
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
@@ -132,7 +130,7 @@ const PresentationController = {
 
   async getCurrentSession(req, res) {
     const { presentationId } = req.params;
-    const presentation = await PresentationService.find(presentationId).populate("currentSession");
+    const presentation = await PresentationService.find(presentationId).populate('currentSession');
     const session = presentation.currentSession;
     return res.status(statusCode.OK).json({ session });
   },
@@ -146,7 +144,6 @@ const PresentationController = {
       const isHost = await SessionService.checkIsHost(email, presentation.currentSession);
 
       return res.status(statusCode.OK).json({ presentation, isHost });
-
     } catch (error) {
       console.log(error);
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
@@ -160,7 +157,6 @@ const PresentationController = {
       presentation.currentSession = null;
       presentation.save();
       return res.status(statusCode.OK).send();
-
     } catch (error) {
       console.log(error);
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
@@ -173,7 +169,6 @@ const PresentationController = {
       await PresentationService.updateCurrentSlideIndex(id, slideIndex);
       io.in(id).emit(socketEvents.slideChange, slideIndex);
       return res.status(statusCode.OK).send();
-
     } catch (error) {
       console.log(error);
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
@@ -190,7 +185,7 @@ const PresentationController = {
       const resultIndex = session.slideToResultMap[`${slideIndex}`];
 
       // push vote
-      const newVote = { user: userId, date: new Date() }
+      const newVote = { user: userId, date: new Date() };
       session.results[resultIndex].options[optionIndex].votes.push(newVote);
       await session.save();
 
@@ -247,14 +242,7 @@ const PresentationController = {
       if (!presentation) {
         return res.status(statusCode.NOT_FOUND).json({ message: 'Not found' });
       }
-      const collaborators = presentation.collaborators.map(collaborator => {
-        const { _id, ...information } = collaborator;
-        return {
-          id: _id,
-          ...information,
-        };
-      });
-      return res.status(statusCode.OK).json({ collaborators });
+      return res.status(statusCode.OK).json({ presentation });
     } catch (error) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
@@ -304,14 +292,7 @@ const PresentationController = {
         .filter(collaborator => findCollaborator.id !== collaborator.id);
       await presentation.save();
       const updatedPresentation = await PresentationService.getCollaborators(presentationId);
-      const collaborators = updatedPresentation.collaborators.map(collaborator => {
-        const { _id, ...information } = collaborator;
-        return {
-          id: _id,
-          ...information,
-        };
-      });
-      return res.status(statusCode.OK).json({ collaborators });
+      return res.status(statusCode.OK).json({ collaborators: updatedPresentation.collaborators });
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: err.message });
     }

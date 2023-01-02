@@ -3,7 +3,7 @@ import Session from './session.model.js';
 const SessionService = {
 
   async list(currentUser) {
-    return Session.find({ hosts: currentUser });
+    return Session.find({ hosts: currentUser }).select(['_id', 'presentationId', 'date']).populate('presentationId', ['name']).lean();
   },
 
   async checkIsHost(email, sessionId) {
@@ -26,7 +26,7 @@ const SessionService = {
       presentationId,
       date,
       results,
-      slideToResultMap
+      slideToResultMap,
     });
     return newSession.save();
   },
@@ -34,9 +34,17 @@ const SessionService = {
   async getChartData(session, resultIndex) {
     return session.results[resultIndex].options.map(option => ({
       text: option.text,
-      voteCount: option.votes.length
+      voteCount: option.votes.length,
     }));
-  }
+  },
+
+  async getQuestionOfSession(sessionId) {
+    return Session.findOne({ sessionId }).select('questions').lean();
+  },
+
+  async getResultOfSession(sessionId) {
+    return Session.findOne({ sessionId }).select('results').populate('results.options.votes.user', ['name', 'email']).lean();
+  },
 };
 
 export default SessionService;
