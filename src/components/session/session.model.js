@@ -23,19 +23,6 @@ const SessionSchema = new Schema({
     }],
     default: [],
   },
-  results: {
-    type: [{
-      question: String,
-      options: [{
-        text: String,
-        votes: [{
-          user: { type: Schema.Types.ObjectId, ref: 'User' },
-          date: Date,
-        }],
-      }],
-    }],
-    require: true,
-  },
   slideToResultMap: {
     type: Object,
     required: true,

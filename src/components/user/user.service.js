@@ -76,6 +76,17 @@ const UserService = {
       email,
     }, { password });
   },
+
+  async removeUserInJoinedGroup(groupId) {
+    return User.updateMany({
+      joinedGroups: groupId,
+    }, { $pullAll: { joinedGroups: [groupId] } });
+  },
+  async removeUserInOwnedGroup(groupId) {
+    return User.updateMany({
+      ownedGroups: groupId,
+    }, { $pullAll: { ownedGroups: [groupId] } });
+  },
 };
 
 export default UserService;

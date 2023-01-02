@@ -194,7 +194,7 @@ const GroupController = {
     if (user.joinedGroups.includes(link.group)) { return res.status(statusCode.OK).json({ groupId: group.groupId }); }
 
     user.joinedGroups.push(link.group);
-    user.save();
+    await user.save();
     return res.status(statusCode.OK).json({ groupId: group.groupId });
   },
 
@@ -206,8 +206,11 @@ const GroupController = {
       if (!group) {
         return res.status(statusCode.FORBIDDEN).json({ message: 'Forbidden' });
       }
+      await UserService.removeUserInJoinedGroup(group.id);
+      await UserService.removeUserInOwnedGroup(group.id);
       return res.status(statusCode.OK).json({ message: 'Delete group succeed' });
     } catch (err) {
+      console.log(err);
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
   },
