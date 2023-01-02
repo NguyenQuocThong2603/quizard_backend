@@ -7,11 +7,41 @@ import PresentationService from '../presentation/presentation.service.js';
 const SessionController = {
 
   async list(req, res) {
-    const { email } = req.user;
-    const sessions = await SessionService.list(email);
-    return res.status(statusCode.OK).json({ sessions });
+    try {
+      const { user } = req;
+      const sessions = await SessionService.list(user._id);
+      const sessionsDTO = sessions.map(session => {
+        const { _id, ...information } = session;
+        return {
+          id: _id,
+          ...information,
+        };
+      });
+      return res.status(statusCode.OK).json({ sessions: sessionsDTO });
+    } catch (err) {
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
+    }
   },
 
+  async getQuestions(req, res) {
+    try {
+      const { sessionId } = req.query;
+      const session = await SessionService.getQuestionOfSession(sessionId);
+      return res.status(statusCode.OK).json({ questions: session.questions });
+    } catch (err) {
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
+    }
+  },
+
+  async getResults(req, res) {
+    try {
+      const { sessionId } = req.query;
+      const session = await SessionService.getResultOfSession(sessionId);
+      return res.status(statusCode.OK).json({ results: session.results });
+    } catch (err) {
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
+    }
+  },
   // async create(req, res) {
   //   const { _id } = req.user;
   //   const { presentation, groupId } = req.body;
@@ -41,7 +71,7 @@ const SessionController = {
   //       votes: []
   //     }))
   //   }));
-    
+
   //   await SessionService.create(hosts, results, slideToResultMap);
   //   return res.status(statusCode.OK).send();
   // },
@@ -71,6 +101,10 @@ const SessionController = {
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
+  },
+
+  async getChat(req, res) {
+
   },
 };
 

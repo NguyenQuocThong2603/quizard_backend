@@ -100,14 +100,12 @@ const PresentationController = {
       const { presentation, groupId } = req.body;
       if (presentation.currentSession != null) return res.status(statusCode.OK).send();
 
-      
       // hosts array (host: can control presentation)
       const { _id } = req.user;
       let hosts;
       if (groupId) {
         // TODO: create with co-hosts
-      }
-      else hosts = [_id];
+      } else hosts = [_id];
 
       // filter multiple choice slides
       let results = presentation.slides.filter(slide => slide.type == slideTypes.multipleChoice);
@@ -124,15 +122,14 @@ const PresentationController = {
         question: result.question,
         options: result.options.map(option => ({
           text: option,
-          votes: []
-        }))
+          votes: [],
+        })),
       }));
 
       const newSession = await SessionService.create(hosts, presentation.id, results, slideToResultMap);
       await PresentationService.updateCurrentSlideIndex(presentation.id, 0);
       await PresentationService.updateCurrentSession(presentation.id, newSession);
       return res.status(statusCode.OK).send();
-
     } catch (error) {
       console.log(error);
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
@@ -141,7 +138,7 @@ const PresentationController = {
 
   async getCurrentSession(req, res) {
     const { presentationId } = req.params;
-    const presentation = await PresentationService.find(presentationId).populate("currentSession");
+    const presentation = await PresentationService.find(presentationId).populate('currentSession');
     const session = presentation.currentSession;
     return res.status(statusCode.OK).json({ session });
   },
@@ -152,9 +149,8 @@ const PresentationController = {
       // TODO: check for user in the group
       const presentation = await PresentationService.find(id);
       const slideIndex = presentation.currentSlideIndex;
-      const slides = presentation.slides;
+      const { slides } = presentation;
       return res.status(statusCode.OK).json({ slides, slideIndex });
-
     } catch (error) {
       console.log(error);
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
@@ -167,7 +163,6 @@ const PresentationController = {
       await PresentationService.updateCurrentSlideIndex(id, slideIndex);
       io.in(id).emit(socketEvents.slideChange, slideIndex);
       return res.status(statusCode.OK).send();
-
     } catch (error) {
       console.log(error);
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
@@ -184,7 +179,7 @@ const PresentationController = {
       const resultIndex = session.slideToResultMap[`${slideIndex}`];
 
       // push vote
-      const newVote = { user: userId, date: new Date() }
+      const newVote = { user: userId, date: new Date() };
       session.results[resultIndex].options[optionIndex].votes.push(newVote);
       await session.save();
 
@@ -208,7 +203,7 @@ const PresentationController = {
 
       // respond current chart: [ {text: string, voteCount: int} ]
       const chart = await SessionService.getChartData(session, resultIndex);
-      
+
       return res.status(statusCode.OK).json({ chart });
     } catch (error) {
       console.log(error);
@@ -226,7 +221,7 @@ const PresentationController = {
       const resultIndex = session.slideToResultMap[`${slideIndex}`];
       // respond current chart: [ {text: string, voteCount: int} ]
       const chart = await SessionService.getChartData(session, resultIndex);
-      
+
       return res.status(statusCode.OK).json({ chart });
     } catch (error) {
       console.log(error);
@@ -248,7 +243,11 @@ const PresentationController = {
           ...information,
         };
       });
-      return res.status(statusCode.OK).json({ collaborators });
+      const presentationDTO = {
+        name: presentation.name,
+        collaborators,
+      };
+      return res.status(statusCode.OK).json({ presentation: presentationDTO });
     } catch (error) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }

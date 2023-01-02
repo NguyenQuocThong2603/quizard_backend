@@ -73,6 +73,7 @@ const GroupController = {
           user.role = 'Member';
         }
       });
+
       const groupDTO = {
         _id: group._id,
         groupId: group.groupId,
