@@ -6,6 +6,11 @@ const SessionService = {
     return Session.find({ hosts: currentUser }).select(['_id', 'presentationId', 'date']).populate('presentationId', ['name']).lean();
   },
 
+  async checkIsHost(email, sessionId) {
+    const count = await Session.countDocuments({ _id: sessionId, hosts: email });
+    return count == 1;
+  },
+
   async find(id) {
     return Session.findOne({ _id: id });
   },

@@ -17,7 +17,7 @@ const GroupService = {
   },
 
   async list() {
-    const groups = Group.find({}).lean();
+    const groups = Group.find({});
     return groups;
   },
 
@@ -34,7 +34,7 @@ const GroupService = {
   async findGroupByIdAndDelete(groupId, owner) {
     const group = Group.findOneAndDelete({
       groupId, owner,
-    }, { returnDocument: 'after' }).lean();
+    }, { returnDocument: 'after' });
     return group;
   },
 };

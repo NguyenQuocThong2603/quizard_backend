@@ -65,16 +65,8 @@ const AuthController = {
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
-
-    const userDTO = {
-      id: user._id,
-      email: user.email,
-      name: user.name,
-      gender: user.gender,
-      dob: user.dob,
-    };
     sendConfirmationEmail(user, link);
-    return res.status(statusCode.CREATED).json({ message: 'Create user successfully', user: userDTO });
+    return res.status(statusCode.CREATED).json({ message: 'Create user successfully', user });
   },
 
   async verify(req, res) {

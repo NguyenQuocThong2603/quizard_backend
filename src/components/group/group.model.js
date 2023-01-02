@@ -12,7 +12,7 @@ const GroupSchema = new Schema({
 
 GroupSchema.set('toJSON', {
   transform: (document, returnedObject) => {
-    delete returnedObject._id;
+    delete returnedObject.id;
     delete returnedObject.__v;
   },
 });

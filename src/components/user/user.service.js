@@ -24,7 +24,7 @@ const UserService = {
   async findAllUsersInGroup(groupID) {
     const users = User.find({
       joinedGroups: { $in: [groupID] },
-    }, { password: 0, gender: 0, dob: 0, isVerified: 0, confirmationCode: 0, ownedGroups: 0, joinedGroups: 0 }).lean();
+    }, { password: 0, gender: 0, dob: 0, isVerified: 0, confirmationCode: 0, ownedGroups: 0, joinedGroups: 0 });
     return users;
   },
 
