@@ -37,6 +37,11 @@ const GroupService = {
     }, { returnDocument: 'after' });
     return group;
   },
+
+  async getSpecialMembers(groupId) {
+    const group = await Group.findOne({ groupId });    
+    return [group.owner, ...group.roles];
+  },
 };
 
 export default GroupService;

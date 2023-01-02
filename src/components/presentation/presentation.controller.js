@@ -6,6 +6,7 @@ import SessionService from '../session/session.service.js';
 import slideTypes from '../../constants/slideTypes.js';
 import io from '../socket/server.js';
 import socketEvents from '../../constants/socketEvents.js';
+import GroupService from '../group/group.service.js';
 
 const PresentationController = {
 
@@ -96,9 +97,7 @@ const PresentationController = {
       // hosts array (host: can control presentation)
       const { email } = req.user;
       let hosts;
-      if (groupId) {
-        // TODO: create with co-hosts
-      }
+      if (groupId) hosts = await GroupService.getSpecialMembers(groupId);
       else hosts = [email];
 
       // filter multiple choice slides
