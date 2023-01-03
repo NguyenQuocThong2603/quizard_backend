@@ -17,9 +17,9 @@ const SessionSchema = new Schema({
   },
   questions: {
     type: [{
-      question: String,
-      vote: Number,
-      answered: Boolean,
+      text: String,
+      vote: { type: Number, default: 0 },
+      answered: { type: Boolean, default: false },
       date: Date,
     }],
     default: [],

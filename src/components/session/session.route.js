@@ -11,6 +11,10 @@ sessionRouter.get('/questions', (req, res) => {
   sessionController.getQuestions(req, res);
 });
 
+sessionRouter.post('/questions', (req, res) => {
+  sessionController.addQuestion(req, res);
+});
+
 sessionRouter.get('/results', (req, res) => {
   sessionController.getResults(req, res);
 });

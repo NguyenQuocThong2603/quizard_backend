@@ -39,8 +39,8 @@ const SessionService = {
     }));
   },
 
-  async getQuestionOfSession(sessionId) {
-    return Session.findOne({ sessionId }).select('questions').lean();
+  async getQuestionOfSession(id) {
+    return Session.findOne({ _id: id }).select('questions');
   },
 
   async getResultOfSession(sessionId) {
