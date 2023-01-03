@@ -40,7 +40,7 @@ const SessionService = {
   },
 
   async getQuestionOfSession(id) {
-    return Session.findOne({ _id: id }).select('questions');
+    return Session.findOne({ _id: id }).select(['presentationId', 'questions']);
   },
 
   async getResultOfSession(id) {
@@ -48,7 +48,7 @@ const SessionService = {
   },
 
   async getChatOfSession(sessionId) {
-    return Session.findOne({ sessionId }).select('chats').populate('chats.user', ['name', 'email']).lean();
+    return Session.findOne({ sessionId }).select('chats').populate('chats.user', ['name', 'email']);
   },
 
   async getLatestForGroup(groupId) {
