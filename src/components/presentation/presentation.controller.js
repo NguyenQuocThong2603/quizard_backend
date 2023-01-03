@@ -118,7 +118,7 @@ const PresentationController = {
         })),
       }));
 
-      const newSession = await SessionService.create(hosts, presentation.id, groupId, results, slideToResultMap);
+      const newSession = await SessionService.create(hosts, presentation.id, presentation.name, groupId, results, slideToResultMap);
       await PresentationService.updateCurrentSlideIndex(presentation.id, 0);
       await PresentationService.updateCurrentSession(presentation.id, newSession);
       if (groupId) io.emit(socketEvents.presentationInGroup(groupId), presentation);

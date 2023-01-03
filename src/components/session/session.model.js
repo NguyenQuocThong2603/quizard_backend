@@ -5,6 +5,7 @@ const { Schema } = mongoose;
 const SessionSchema = new Schema({
   hosts: { type: [String], required: true },
   presentationId: { type: Schema.Types.ObjectId, ref: 'Presentation', required: true },
+  presentationName: { type: String, required: true },
   groupId: { type: Schema.Types.ObjectId, ref: 'Group' },
   date: { type: Date, required: true },
   chats: {
