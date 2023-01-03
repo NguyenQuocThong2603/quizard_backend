@@ -219,11 +219,13 @@ const GroupController = {
     try {
       const { groupId } = req.query;
       const session = await SessionService.getLatestForGroup(groupId);
-      if (!session || !session.presentationId.currentSession) res.status(statusCode.OK).json({ presentation: null });
+      if (!session || !session.presentationId.currentSession) 
+        return res.status(statusCode.OK).json({ presentation: null });
       if (session.presentationId.currentSession.toString() == session._id.toString())
         return res.status(statusCode.OK).json({ presentation: session.presentationId });
       return res.status(statusCode.OK).json({ presentation: null });
     } catch (err) {
+      console.log(err);
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: err.message });
     }
   },
