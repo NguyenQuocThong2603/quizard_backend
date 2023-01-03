@@ -33,6 +33,51 @@ const SessionController = {
     }
   },
 
+  async addQuestion(req, res) {
+    try {
+      const { sessionId, text } = req.body;
+      const session = await SessionService.find(sessionId);
+      const newQuestion = {
+        text,
+        likes: [],
+        answered: false,
+        date: new Date()
+      }
+      session.questions.push(newQuestion)
+      session.save();
+      return res.status(statusCode.OK).json({ question: newQuestion });
+    } catch (err) {
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: err.message });
+    }
+  },
+
+  async toggleLikeQuestion(req, res) {
+    try {
+      const { id } = req.user;
+      const { sessionId, questionIndex } = req.body;
+      const session = await SessionService.getQuestionOfSession(sessionId);
+      const likes = session.questions[questionIndex].likes;
+      if (likes.includes(id)) session.questions[questionIndex].likes = likes.filter(x => x != id);
+      else likes.push(id);
+      session.save();
+      return res.status(statusCode.OK).json({ likes: session.questions[questionIndex].likes });
+    } catch (err) {
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: err.message });
+    }
+  },
+
+  async toggleQuestionAnswered(req, res) {
+    try {
+      const { sessionId, questionIndex } = req.body;
+      const session = await SessionService.getQuestionOfSession(sessionId);
+      session.questions[questionIndex].answered = !session.questions[questionIndex].answered;
+      session.save();
+      return res.status(statusCode.OK).json({ answered: session.questions[questionIndex].answered });
+    } catch (err) {
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: err.message });
+    }
+  },
+
   async getResults(req, res) {
     try {
       const { sessionId } = req.query;
@@ -42,39 +87,6 @@ const SessionController = {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
     }
   },
-  // async create(req, res) {
-  //   const { id } = req.user;
-  //   const { presentation, groupId } = req.body;
-  //   let hosts;
-  //   if (groupId) {
-  //     // create with co-hosts
-  //   }
-  //   else {
-  //     hosts = [_id];
-  //   }
-  //   // filter multiple choice slides
-  //   let results = presentation.slides.filter(slide => slide.type == slideTypes.multipleChoice);
-
-  //   // slide index to result index map
-  //   const slideToResultMap = {};
-  //   results.forEach((result, resultIndex) => {
-  //     const slideIndex = presentation.slides.indexOf(result);
-  //     slideToResultMap[slideIndex] = resultIndex;
-  //   });
-  //   console.log(slideToResultMap);
-
-  //   // convert from slide to result
-  //   results = results.map(result => ({
-  //     question: result.question,
-  //     options: result.options.map(option => ({
-  //       text: option.text,
-  //       votes: []
-  //     }))
-  //   }));
-
-  //   await SessionService.create(hosts, results, slideToResultMap);
-  //   return res.status(statusCode.OK).send();
-  // },
 
   async getSession(req, res) {
     const { id: fromUser } = req.user;

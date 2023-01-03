@@ -11,6 +11,18 @@ sessionRouter.get('/questions', (req, res) => {
   sessionController.getQuestions(req, res);
 });
 
+sessionRouter.post('/questions', (req, res) => {
+  sessionController.addQuestion(req, res);
+});
+
+sessionRouter.post('/questions/like', (req, res) => {
+  sessionController.toggleLikeQuestion(req, res);
+});
+
+sessionRouter.post('/questions/markAnswered', (req, res) => {
+  sessionController.toggleQuestionAnswered(req, res);
+});
+
 sessionRouter.get('/results', (req, res) => {
   sessionController.getResults(req, res);
 });
