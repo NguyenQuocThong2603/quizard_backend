@@ -121,6 +121,7 @@ const PresentationController = {
       const newSession = await SessionService.create(hosts, presentation.id, groupId, results, slideToResultMap);
       await PresentationService.updateCurrentSlideIndex(presentation.id, 0);
       await PresentationService.updateCurrentSession(presentation.id, newSession);
+      if (groupId) io.emit(socketEvents.presentationInGroup(groupId), presentation);
       return res.status(statusCode.OK).send();
     } catch (error) {
       console.log(error);
@@ -163,9 +164,12 @@ const PresentationController = {
     try {
       const { id } = req.body;
       const presentation = await PresentationService.find(id);
+      const session = await SessionService.find(presentation.currentSession);
+      const groupId = session.groupId;
       presentation.currentSession = null;
       presentation.save();
       io.in(id).emit(socketEvents.presentationEnd);
+      if (groupId) io.emit(socketEvents.presentationInGroup(groupId), null);
       return res.status(statusCode.OK).send();
     } catch (error) {
       console.log(error);

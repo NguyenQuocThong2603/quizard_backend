@@ -2,5 +2,6 @@ export default {
     joinPresentation: "joinPresentation",
     slideChange: "slideChange",
     voteChange: "voteChange",
-    presentationEnd: "presentationEnd"
+    presentationEnd: "presentationEnd",
+    presentationInGroup: (groupId) => `presentationInGroup/${groupId}`
 };

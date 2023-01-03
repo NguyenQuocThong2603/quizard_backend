@@ -219,8 +219,7 @@ const GroupController = {
     try {
       const { groupId } = req.query;
       const session = await SessionService.getLatestForGroup(groupId);
-      console.log(session);
-      if (!session) res.status(statusCode.OK).json({ presentation: null });
+      if (!session || !session.presentationId.currentSession) res.status(statusCode.OK).json({ presentation: null });
       if (session.presentationId.currentSession.toString() == session._id.toString())
         return res.status(statusCode.OK).json({ presentation: session.presentationId });
       return res.status(statusCode.OK).json({ presentation: null });
