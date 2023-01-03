@@ -51,7 +51,7 @@ const SessionController = {
     }
   },
 
-  async likeQuestion(req, res) {
+  async toggleLikeQuestion(req, res) {
     try {
       const { id } = req.user;
       const { sessionId, questionIndex } = req.body;
@@ -61,6 +61,18 @@ const SessionController = {
       else likes.push(id);
       session.save();
       return res.status(statusCode.OK).json({ likes: session.questions[questionIndex].likes });
+    } catch (err) {
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: err.message });
+    }
+  },
+
+  async toggleQuestionAnswered(req, res) {
+    try {
+      const { sessionId, questionIndex } = req.body;
+      const session = await SessionService.getQuestionOfSession(sessionId);
+      session.questions[questionIndex].answered = !session.questions[questionIndex].answered;
+      session.save();
+      return res.status(statusCode.OK).json({ answered: session.questions[questionIndex].answered });
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: err.message });
     }
