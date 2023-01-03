@@ -1,8 +1,8 @@
 import GroupService from '../group/group.service.js';
 import statusCode from '../../constants/statusCode.js';
 import SessionService from './session.service.js';
-import slideTypes from '../../constants/slideTypes.js';
-import PresentationService from '../presentation/presentation.service.js';
+import io from '../socket/server.js';
+import socketEvents from '../../constants/socketEvents.js';
 
 const SessionController = {
 
@@ -112,12 +112,18 @@ const SessionController = {
         return res.status(statusCode.BAD_REQUEST).json({ message: 'Add message failed' });
       }
       const now = new Date();
+      const newMessage = {
+        user,
+        message,
+        date: now,
+      };
       session.chats.push({
         user: user.id,
         message,
         date: now,
       });
       await session.save();
+      io.in(session.presentationId.toString()).emit(socketEvents.chat, newMessage);
       return res.status(statusCode.OK).json({ chats: session.chats });
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
