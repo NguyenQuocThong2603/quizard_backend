@@ -18,7 +18,7 @@ const SessionSchema = new Schema({
   questions: {
     type: [{
       text: String,
-      vote: { type: Number, default: 0 },
+      likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
       answered: { type: Boolean, default: false },
       date: Date,
     }],

@@ -39,13 +39,28 @@ const SessionController = {
       const session = await SessionService.find(sessionId);
       const newQuestion = {
         text,
-        vote: 0,
+        likes: [],
         answered: false,
         date: new Date()
       }
       session.questions.push(newQuestion)
       session.save();
       return res.status(statusCode.OK).json({ question: newQuestion });
+    } catch (err) {
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: err.message });
+    }
+  },
+
+  async likeQuestion(req, res) {
+    try {
+      const { id } = req.user;
+      const { sessionId, questionIndex } = req.body;
+      const session = await SessionService.getQuestionOfSession(sessionId);
+      const likes = session.questions[questionIndex].likes;
+      if (likes.includes(id)) session.questions[questionIndex].likes = likes.filter(x => x != id);
+      else likes.push(id);
+      session.save();
+      return res.status(statusCode.OK).json({ likes: session.questions[questionIndex].likes });
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: err.message });
     }
