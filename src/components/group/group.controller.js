@@ -5,6 +5,7 @@ import GroupService from './group.service.js';
 import UserService from '../user/user.service.js';
 import LinkService from '../link/link.service.js';
 import { sendInviteLink } from '../../config/nodemailer.js';
+import SessionService from '../session/session.service.js';
 
 const GroupController = {
 
@@ -213,6 +214,21 @@ const GroupController = {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
   },
+
+  async getCurrentPresentation(req, res) {
+    try {
+      const { groupId } = req.query;
+      const session = await SessionService.getLatestForGroup(groupId);
+      console.log(session);
+      if (!session) res.status(statusCode.OK).json({ presentation: null });
+      if (session.presentationId.currentSession.toString() == session._id.toString())
+        return res.status(statusCode.OK).json({ presentation: session.presentationId });
+      return res.status(statusCode.OK).json({ presentation: null });
+    } catch (err) {
+      return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: err.message });
+    }
+  },
+
 };
 
 export default GroupController;

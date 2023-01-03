@@ -11,6 +11,10 @@ groupRouter.post('/', (req, res) => {
   GroupController.create(req, res);
 });
 
+groupRouter.get('/currentPresentation', (req, res) => {
+  GroupController.getCurrentPresentation(req, res);
+});
+
 groupRouter.get('/:groupId', (req, res) => {
   GroupController.getDetail(req, res);
 });
@@ -30,7 +34,9 @@ groupRouter.post('/inviteByEmail', (req, res) => {
 groupRouter.post('/join', (req, res) => {
   GroupController.join(req, res);
 });
+
 groupRouter.delete('/:groupId', (req, res) => {
   GroupController.deleteGroup(req, res);
 });
+
 export default groupRouter;

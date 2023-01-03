@@ -80,13 +80,14 @@ const UserService = {
   async checkInGroup(email, groupId) {
     const user = await User.findOne({ email, joinedGroups: groupId });
     return user != null;
-  }
+  },
 
   async removeUserInJoinedGroup(groupId) {
     return User.updateMany({
       joinedGroups: groupId,
     }, { $pullAll: { joinedGroups: [groupId] } });
   },
+  
   async removeUserInOwnedGroup(groupId) {
     return User.updateMany({
       ownedGroups: groupId,

@@ -46,8 +46,13 @@ const SessionService = {
   async getResultOfSession(sessionId) {
     return Session.findOne({ sessionId }).select('results').populate('results.options.votes.user', ['name', 'email']).lean();
   },
+
   async getChatOfSession(sessionId) {
     return Session.findOne({ sessionId }).select('chats').populate('chats.user', ['name', 'email']).lean();
+  },
+
+  async getLatestForGroup(groupId) {
+    return Session.findOne({ groupId }).sort({ date: -1 }).populate(['presentationId', 'groupId']);
   },
 };
 
