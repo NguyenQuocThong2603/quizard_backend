@@ -41,10 +41,11 @@ const SessionController = {
         text,
         likes: [],
         answered: false,
-        date: new Date()
-      }
-      session.questions.push(newQuestion)
+        date: new Date(),
+      };
+      session.questions.push(newQuestion);
       session.save();
+      io.in(session.presentationId.toString()).emit(socketEvents.addQuestion, newQuestion);
       return res.status(statusCode.OK).json({ question: newQuestion });
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: err.message });
@@ -56,12 +57,21 @@ const SessionController = {
       const { id } = req.user;
       const { sessionId, questionIndex } = req.body;
       const session = await SessionService.getQuestionOfSession(sessionId);
-      const likes = session.questions[questionIndex].likes;
-      if (likes.includes(id)) session.questions[questionIndex].likes = likes.filter(x => x != id);
-      else likes.push(id);
-      session.save();
+      const { likes } = session.questions[questionIndex];
+      let newLikes;
+      if (likes.includes(id)) {
+        session.questions[questionIndex].likes = likes.filter(x => x != id);
+        newLikes = session.questions[questionIndex].likes;
+      } else {
+        likes.push(id);
+        newLikes = likes;
+      }
+      await session.save();
+      io.in(session.presentationId.toString())
+        .emit(socketEvents.likeQuestion, { newLikes, questionIndex });
       return res.status(statusCode.OK).json({ likes: session.questions[questionIndex].likes });
     } catch (err) {
+      console.log(err);
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: err.message });
     }
   },
@@ -71,7 +81,9 @@ const SessionController = {
       const { sessionId, questionIndex } = req.body;
       const session = await SessionService.getQuestionOfSession(sessionId);
       session.questions[questionIndex].answered = !session.questions[questionIndex].answered;
-      session.save();
+      await session.save();
+      io.in(session.presentationId.toString())
+        .emit(socketEvents.markedQuestion, { newAnswered: session.questions[questionIndex].answered, questionIndex });
       return res.status(statusCode.OK).json({ answered: session.questions[questionIndex].answered });
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: err.message });

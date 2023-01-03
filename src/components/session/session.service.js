@@ -40,7 +40,7 @@ const SessionService = {
   },
 
   async getQuestionOfSession(id) {
-    return Session.findOne({ _id: id }).select('questions');
+    return Session.findOne({ _id: id }).select(['presentationId', 'questions']);
   },
 
   async getResultOfSession(sessionId) {
