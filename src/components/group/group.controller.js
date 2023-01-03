@@ -41,8 +41,7 @@ const GroupController = {
     // create group
     let group;
     try {
-      const groupId = nanoid(10);
-      group = await GroupService.create(groupId, name, description, owner);
+      group = await GroupService.create(name, description, owner);
 
       // add user to joined groups & owned groups
       const user = await UserService.findUser(owner);
@@ -79,7 +78,6 @@ const GroupController = {
 
       const groupDTO = {
         id: group.id,
-        groupId: group.groupId,
         name: group.name,
         description: group.description,
         joinedUser: users,
@@ -195,8 +193,8 @@ const GroupController = {
     if (user.joinedGroups.includes(link.group)) { return res.status(statusCode.OK).json({ groupId: group.groupId }); }
 
     user.joinedGroups.push(link.group);
-    user.save();
-    return res.status(statusCode.OK).json({ groupId: group.groupId });
+    await user.save();
+    return res.status(statusCode.OK).json({ groupId: group.id });
   },
 
   async deleteGroup(req, res) {
@@ -207,8 +205,11 @@ const GroupController = {
       if (!group) {
         return res.status(statusCode.FORBIDDEN).json({ message: 'Forbidden' });
       }
+      await UserService.removeUserInJoinedGroup(group.id);
+      await UserService.removeUserInOwnedGroup(group.id);
       return res.status(statusCode.OK).json({ message: 'Delete group succeed' });
     } catch (err) {
+      console.log(err);
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
   },
