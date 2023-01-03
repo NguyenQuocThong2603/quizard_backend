@@ -9,15 +9,8 @@ const SessionController = {
   async list(req, res) {
     try {
       const { user } = req;
-      const sessions = await SessionService.list(user._id);
-      const sessionsDTO = sessions.map(session => {
-        const { _id, ...information } = session;
-        return {
-          id: _id,
-          ...information,
-        };
-      });
-      return res.status(statusCode.OK).json({ sessions: sessionsDTO });
+      const sessions = await SessionService.list(user.email);
+      return res.status(statusCode.OK).json({ sessions });
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
     }

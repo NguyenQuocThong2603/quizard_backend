@@ -2,8 +2,8 @@ import Session from './session.model.js';
 
 const SessionService = {
 
-  async list(currentUser) {
-    return Session.find({ hosts: currentUser }).select(['_id', 'presentationId', 'date']).populate('presentationId', ['name']).lean();
+  async list(userEmail) {
+    return Session.find({ hosts: userEmail }).select(['_id', 'presentationId', 'date']).populate('presentationId', ['name']);
   },
 
   async checkIsHost(email, sessionId) {
@@ -43,8 +43,8 @@ const SessionService = {
     return Session.findOne({ _id: id }).select('questions');
   },
 
-  async getResultOfSession(sessionId) {
-    return Session.findOne({ sessionId }).select('results').populate('results.options.votes.user', ['name', 'email']).lean();
+  async getResultOfSession(id) {
+    return Session.findOne({ _id: id }).select('results').populate('results.options.votes.user', ['name', 'email']);
   },
 
   async getChatOfSession(sessionId) {
