@@ -56,17 +56,17 @@ const PresentationService = {
   },
 
   async delete(_id) {
-    return Presentation.deleteOne({ id });
+    return Presentation.deleteOne({ _id });
   },
 
   async updateCurrentSession(_id, currentSession) {
-    return Presentation.updateOne({_id}, {currentSession});
+    return Presentation.updateOne({ _id }, { currentSession });
   },
 
   async updateCurrentSlideIndex(_id, currentSlideIndex) {
-    return Presentation.updateOne({_id}, {currentSlideIndex});
-  }
-  
+    return Presentation.updateOne({ _id }, { currentSlideIndex });
+  },
+
 };
 
 export default PresentationService;
