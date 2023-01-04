@@ -3,7 +3,8 @@ import Session from './session.model.js';
 const SessionService = {
 
   async list(userEmail) {
-    return Session.find({ hosts: userEmail }).select(['_id', 'presentationId', 'date']).populate('presentationId', ['name']);
+    return Session.find({ hosts: userEmail })
+      .select(['_id', 'presentationId', 'date', 'presentationName']);
   },
 
   async checkIsHost(email, sessionId) {
