@@ -3,6 +3,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 const config = {
+  SOCKET_PORT: process.env.SOCKET_PORT || 5000,
   PORT: process.env.PORT || 4000,
   DATABASE_URL: process.env.DATABASE_URL,
   JWT_SECRET: process.env.JWT_SECRET,
