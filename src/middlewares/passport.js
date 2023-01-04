@@ -73,11 +73,9 @@ passport.use(new GoogleStrategy(
       });
       await newUser.save();
       const userDTO = {
-        id: user._id,
-        email: user.email,
-        name: user.name,
-        gender: user.gender,
-        dob: user.dob,
+        id: newUser._id,
+        email: newUser.email,
+        name: newUser.name,
       };
       return cb(null, userDTO);
     } catch (err) {

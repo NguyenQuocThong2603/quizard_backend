@@ -58,7 +58,7 @@ const AuthController = {
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
 
-    const confirmationCode = nanoid(10);
+    const confirmationCode = nanoid(20);
     // create user
     try {
       user = await UserService.createUser(email, hash, name, gender, dob, confirmationCode);

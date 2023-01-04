@@ -10,7 +10,7 @@ const UserSchema = new Schema({
   dob: { type: String },
   isVerified: { type: Boolean, default: false },
   refreshToken: String,
-  confirmationCode: { type: String, unique: true },
+  confirmationCode: { type: String },
   joinedGroups: { type: [Schema.Types.ObjectId], ref: 'Group', default: [] },
   ownedGroups: { type: [Schema.Types.ObjectId], ref: 'Group', default: [] },
 });
