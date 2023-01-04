@@ -9,13 +9,6 @@ const GroupSchema = new Schema({
   roles: { type: Array, default: [] },
 });
 
-GroupSchema.set('toJSON', {
-  transform: (document, returnedObject) => {
-    delete returnedObject.id;
-    delete returnedObject.__v;
-  },
-});
-
 const Group = mongoose.model('Group', GroupSchema);
 
 export default Group;

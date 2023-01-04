@@ -50,6 +50,7 @@ const GroupController = {
       user.ownedGroups.push(group.id);
       user.save();
     } catch (err) {
+      console.log(err);
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
 
@@ -187,15 +188,17 @@ const GroupController = {
   async join(req, res) {
     const { url } = req.body;
     const link = await LinkService.findByUrl(url);
-    const group = await GroupService.find(link.group);
+    const groupId = link.group;
 
     const { email } = req.user;
     const user = await UserService.findUser(email);
-    if (user.joinedGroups.includes(link.group)) { return res.status(statusCode.OK).json({ groupId: group.groupId }); }
+    if (user.joinedGroups.includes(groupId)) { return res.status(statusCode.OK).json({ groupId }); }
 
-    user.joinedGroups.push(link.group);
+    console.log("before", user.joinedGroups);
+    user.joinedGroups.push(groupId);
+    console.log("after", user.joinedGroups);
     await user.save();
-    return res.status(statusCode.OK).json({ groupId: group.id });
+    return res.status(statusCode.OK).json({ groupId });
   },
 
   async deleteGroup(req, res) {
