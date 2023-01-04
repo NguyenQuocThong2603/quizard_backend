@@ -50,7 +50,7 @@ const SessionService = {
   },
 
   async getChatOfSession(sessionId) {
-    return Session.findOne({ sessionId }).select('chats').populate('chats.user', ['name', 'email']);
+    return Session.findOne({ _id: sessionId }).select('chats').populate('chats.user', ['name', 'email']);
   },
 
   async getLatestForGroup(groupId) {

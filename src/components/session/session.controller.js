@@ -97,7 +97,6 @@ const SessionController = {
   async getSession(req, res) {
     const { id: fromUser } = req.user;
     const { groupId } = req.body;
-    console.log(req.body);
     const { _id: group } = await GroupService.findGroupById(groupId);
     let session = await SessionService.getSession(group, fromUser);
     if (session == null) session = await SessionService.createSession(group, fromUser);
