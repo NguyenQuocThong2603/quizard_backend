@@ -38,13 +38,13 @@ const LinkService = {
     return Link.findOne({
       group,
       fromUser,
-    }, { __v: 0, _id: 0 });
+    });
   },
 
   async findByUrl(url) {
     return Link.findOne({
       url,
-    }, { __v: 0, _id: 0 });
+    });
   },
 };
 
