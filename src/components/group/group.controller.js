@@ -26,7 +26,9 @@ const GroupController = {
       case 'joined':
         const joinedGroups = await UserService.getJoinedGroups(user);
         const ownedGroups = await UserService.getOwnedGroups(user);
-        groups = joinedGroups.filter(x => !(x in ownedGroups));
+        console.log("joined", joinedGroups);
+        console.log("owned", ownedGroups);
+        groups = joinedGroups.filter(x => ownedGroups.every(y => x._id.toString() != y._id.toString()));
         // const setMap = new Map();
         // for (const group of ownedGroups.concat(joinedGroups)) setMap.set(group.groupId, group);
         // groups = [...setMap.values()];
@@ -58,8 +60,13 @@ const GroupController = {
   },
 
   async getDetail(req, res) {
+    const { email } = req.user;
     const { groupId } = req.params;
     try {
+      const user = await UserService.findUser(email);
+      if (!user.joinedGroups.includes(groupId))
+        return res.status(statusCode.FORBIDDEN).send();
+
       const group = await GroupService.findGroupById(groupId);
       if (!group) {
         return res.status(statusCode.NOT_FOUND).json({ message: 'Group not found' });
@@ -222,7 +229,7 @@ const GroupController = {
     try {
       const { groupId } = req.query;
       const session = await SessionService.getLatestForGroup(groupId);
-      if (!session || !session.presentationId.currentSession) { return res.status(statusCode.OK).json({ presentation: null }); }
+      if (!session || !session.presentationId || !session.presentationId.currentSession) { return res.status(statusCode.OK).json({ presentation: null }); }
       if (session.presentationId.currentSession.toString() == session._id.toString()) { return res.status(statusCode.OK).json({ presentation: session.presentationId }); }
       return res.status(statusCode.OK).json({ presentation: null });
     } catch (err) {
