@@ -95,8 +95,7 @@ const AuthController = {
       }).cookie('user', userValue, {
         maxAge: 5000, // Lifetime
       });
-      console.log(accessToken);
-      res.redirect('http://localhost:3000/dashboard');
+      res.redirect('http://localhost:3000/groups');
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }

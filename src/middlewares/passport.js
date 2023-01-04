@@ -55,8 +55,16 @@ passport.use(new GoogleStrategy(
       const user = await User.findOne({
         email: profile.emails[0].value,
       });
+
       if (user) {
-        return cb(null, user);
+        const userDTO = {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          gender: user.gender,
+          dob: user.dob,
+        };
+        return cb(null, userDTO);
       }
       const newUser = new User({
         email: profile.emails[0].value,
@@ -65,7 +73,7 @@ passport.use(new GoogleStrategy(
       });
       await newUser.save();
       const userDTO = {
-        id: user.id,
+        id: user._id,
         email: user.email,
         name: user.name,
         gender: user.gender,
