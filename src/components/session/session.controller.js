@@ -1,7 +1,7 @@
 import GroupService from '../group/group.service.js';
 import statusCode from '../../constants/statusCode.js';
 import SessionService from './session.service.js';
-import io from '../socket/server.js';
+import io from '../../../app.js';
 import socketEvents from '../../constants/socketEvents.js';
 
 const SessionController = {

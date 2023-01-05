@@ -4,7 +4,7 @@ import PresentationService from './presentation.service.js';
 import UserService from '../user/user.service.js';
 import SessionService from '../session/session.service.js';
 import slideTypes from '../../constants/slideTypes.js';
-import io from '../socket/server.js';
+import io from '../../../app.js';
 import socketEvents from '../../constants/socketEvents.js';
 import GroupService from '../group/group.service.js';
 
@@ -165,7 +165,7 @@ const PresentationController = {
       const { id } = req.body;
       const presentation = await PresentationService.find(id);
       const session = await SessionService.find(presentation.currentSession);
-      const groupId = session.groupId;
+      const { groupId } = session;
       presentation.currentSession = null;
       presentation.save();
       io.in(id).emit(socketEvents.presentationEnd);
