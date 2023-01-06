@@ -93,9 +93,11 @@ const AuthController = {
       res.cookie('accessToken', accessToken, {
         maxAge: 30000, // Lifetime
         secure: true,
+        path: 'https://quizard-app.vercel.app/groups',
       }).cookie('user', userValue, {
         maxAge: 30000, // Lifetime
         secure: true,
+        path: 'https://quizard-app.vercel.app/groups',
       });
       res.redirect('https://quizard-app.vercel.app/groups');
     } catch (err) {
