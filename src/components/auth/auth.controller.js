@@ -91,10 +91,10 @@ const AuthController = {
       const accessToken = this.createToken(user);
       const userValue = JSON.stringify(user);
       res.cookie('accessToken', accessToken, {
-        maxAge: 5000, // Lifetime
+        maxAge: 30000, // Lifetime
         secure: true,
       }).cookie('user', userValue, {
-        maxAge: 5000, // Lifetime
+        maxAge: 30000, // Lifetime
         secure: true,
       });
       res.redirect('https://quizard-app.vercel.app/groups');
