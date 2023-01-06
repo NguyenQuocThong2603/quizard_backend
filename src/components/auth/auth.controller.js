@@ -95,7 +95,7 @@ const AuthController = {
       }).cookie('user', userValue, {
         maxAge: 5000, // Lifetime
       });
-      res.redirect('http://localhost:3000/groups');
+      res.redirect('https://quizard-app.vercel.app/groups');
     } catch (err) {
       return res.status(statusCode.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
