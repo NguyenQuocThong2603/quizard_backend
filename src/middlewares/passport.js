@@ -48,7 +48,7 @@ passport.use(new GoogleStrategy(
   {
     clientID: config.GOOGLE_CLIENT_ID,
     clientSecret: config.GOOGLE_CLIENT_SECRET,
-    callbackURL: 'https://quizardbackend-production-cb8d.up.railway.app/auth/google/redirect',
+    callbackURL: '/auth/google/redirect',
   },
   (async (accessToken, refreshToken, profile, cb) => {
     try {

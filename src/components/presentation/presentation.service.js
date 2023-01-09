@@ -34,7 +34,7 @@ const PresentationService = {
   },
 
   async getCollaborators(presentationId) {
-    const collaborators = Presentation.findOne({ id: presentationId })
+    const collaborators = Presentation.findOne({ _id: presentationId })
       .populate('collaborators', ['_id', 'name', 'email']);
     return collaborators;
   },
